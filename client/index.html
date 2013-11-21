@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Feder &ndash; A Online Publishing Platform</title>
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/icomoon.css" />
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic,700italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/jquery.modal.css" />
+    <link rel="stylesheet" href="css/medium.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <div class="editor-view">
+        <header class="toolbar">
+            <h1 class="brand">Feder <span>&ndash; A Online Publishing Platform</span></h1>
+            <ul class="post-tools">
+                <li><a href="#" class="delete-post"><i class="icon-trash"></i> Delete Post</a></li>
+                <li><a href="#" class="save-post"><i class="icon-disk"></i> Save Post</a></li>
+                <li><a href="#" class="publish-post"><i class="icon-checkmark"></i> Publish Post</a></li>
+            </ul>
+        </header>
+
+        <section class="content">
+            <h1 class="article-title" id="article-title"></h1>
+
+            <h2 class="article-subtitle" id="article-subtitle"></h2>
+
+            <section class="article-body" id="article-body"></section>
+        </section>
+
+        <footer class="footer">
+            <section class="author">
+                signed in as
+                <span class="author-name">Philipp Siekmann</span>
+                <a href="#" class="logout"><i class="icon-switch"></i></a>
+            </section>
+
+            <ul class="post-meta">
+                <li><strong>212</strong> words</li>
+                <li><strong>1183</strong> characters</li>
+                <li><a href="#info"><i class="icon-info"></i></a></li>
+            </ul>
+        </footer>
+
+        <div id="info" class="modal info">
+            <h2>Shortcuts</h2>
+            <table class="info-table">
+                <thead>
+                    <tr>
+                        <th>Result</th>
+                        <th>Shortcut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Bold</strong></td>
+                        <td>Ctrl / Cmd + B</td>
+                    </tr>
+                    <tr>
+                        <td><em>Emphasize</em></td>
+                        <td>Ctrl / Cmd + I</td>
+                    </tr>
+                    <tr>
+                        <td><u>Underline</u></td>
+                        <td>Ctrl / Cmd + U</td>
+                    </tr>
+                    <tr>
+                        <td><del>Strike-through</del></td>
+                        <td>Ctrl / Cmd + T</td>
+                    </tr>
+                    <tr>
+                        <td><a href="#">Link</a></td>
+                        <td>Ctrl / Cmd + L</td>
+                    </tr>
+                    <tr>
+                        <td>Image</td>
+                        <td>Ctrl / Cmd + I</td>
+                    </tr>
+                    <tr>
+                        <td>Quote</td>
+                        <td>Ctrl / Cmd + Q</td>
+                    </tr>
+                    <tr>
+                        <td>Heading</td>
+                        <td>Ctrl / Cmd + H</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="reading-view">
+        <header class="toolbar">
+            <h1 class="brand">Feder <span>&ndash; A Online Publishing Platform</span></h1>
+            <ul class="post-tools">
+                <li><a href="#" class="delete-post"><i class="icon-book"></i> Collections</a></li>
+                <li><a href="#" class="delete-post"><i class="icon-box"></i> My Posts</a></li>
+            </ul>
+        </header>
+
+        <section class="content">
+            <h2>Browse All Collections</h2>
+
+            <div class="collections">
+                <a class="collection" href="#">Science <span>12 Posts</span></a>
+                <a class="collection" href="#">Technology <span>42 Posts</span></a>
+                <a class="collection" href="#">Architecture <span>38 Posts</span></a>
+                <a class="collection" href="#">Culture <span>3 Posts</span></a>
+                <a class="collection" href="#">Design <span>7 Posts</span></a>
+                <a class="collection" href="#">Sports <span>174 Posts</span></a>
+                <a class="collection" href="#">Food <span>243 Posts</span></a>
+                <a class="collection" href="#">Living <span>95 Posts</span></a>
+                <a class="collection" href="#">Pets <span>41 Posts</span></a>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <section class="author">
+                signed in as
+                <span class="author-name">Philipp Siekmann</span>
+                <a href="#" class="logout"><i class="icon-switch"></i></a>
+            </section>
+        </footer>
+    </div>
+
+    <!-- Les JavaScript -->
+    <script src="js/jquery-min.js"></script>
+    <script src="js/json2.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/backbone-min.js"></script>
+    <script src="js/jquery.modal-min.js"></script>
+    <script src="js/medium.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
