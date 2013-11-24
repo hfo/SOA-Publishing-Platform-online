@@ -22,6 +22,8 @@ $(function() {
 
 		var _urlRoot = 'http://localhost:8080';
 
+		var testCollections = [{"id":0,"title":"Technology","image":"","views":100,"posts":18},{"id":1,"title":"Science","image":"","views":24,"posts":18},{"id":2,"title":"Food","image":"","views":123,"posts":18},{"id":3,"title":"Sports","image":"","views":0,"posts":18},{"id":4,"title":"Comedy","image":"","views":0,"posts":18}];
+
 		/*
 		 * User Model
 		 * model to represent the signed in user
@@ -93,6 +95,15 @@ $(function() {
 	    	}
 	    });
 
+	    /*
+		 * Collection Collection ;P
+		 * collection of post collections from the server
+		 */
+	    var Collections = Backbone.Collection.extend({
+			model: Collection,
+			url: _urlRoot+'/collections'
+		});
+
 		/*
 		 * AppView
 		 * the main view for our application
@@ -103,16 +114,23 @@ $(function() {
 				'click .home-link':			'showHomeView',
 				'click .collections-link':	'showCollectionView',
 				'click .collection':		'showCollectionDetailView',
-				'click .post':				'showPostView'
+				'click .post':				'showEditorView'	// TODO: for test purposes, change to showPostView later
 			},
 			initialize: function() {
 				logger('Feder App started.', 'info');
 
 				// sample model instantiation
-				var sampleUser = new User({ id: 0, username: 'Philipp' });
-				var sampleCollection = new Collection({ id: 0, title: 'Sample Collection' });
-				var samplePost = new Post({ id: 0, title: 'Sample Post' });
-				var sampleComment = new Comment({ id: 0 });
+				this.user = new User({ id: 0, username: 'Philipp' });
+				this.post = new Post({ id: 0, title: 'Sample Post', subtitle: 'Blubb', body: 'Lorem ipsum...' });
+				// var sampleComment = new Comment({ id: 0 });
+
+				// collection of post collections instance
+				this.collections = new Collections(testCollections);
+				// collections.fetch();
+
+				// sort collections by views (descending)
+				this.collections.models = _.sortBy(this.collections.models, function(o) { return o.get('views'); });
+				this.collections.models.reverse();
 
 				// set up medium.js for editor view
 				new Medium({
@@ -160,6 +178,8 @@ $(function() {
 			showHomeView: function() {
 				logger('[View Changed] Home View', 'info');
 
+				// TODO: display recent and popular posts
+
 				$('.editor-view').fadeOut(500);
 				$('.reading-view').fadeIn(500);
 				$('.home-view').fadeIn(500);
@@ -167,6 +187,13 @@ $(function() {
 			},
 			showCollectionView: function() {
 				logger('[View Changed] Collection View', 'info');
+
+				$('.collections').empty();
+
+				// create markup for collection list
+				_.each(this.collections.models, function(value, key, list) {
+					$('.collections').append('<a class="collection" href="#">'+value.get('title')+' <span>'+value.get('posts')+' Posts</span></a>')	
+				}, this);
 
 				$('.editor-view').fadeOut(500);
 				$('.reading-view').fadeIn(500);
@@ -176,16 +203,33 @@ $(function() {
 			showCollectionDetailView: function() {
 				logger('[View Changed] Collection Detail View', 'info');
 
+				// TODO: show recent and popular posts of selected collection
+
 				$('.editor-view').fadeOut(500);
 				$('.reading-view').fadeIn(500);
 				$('.home-view').fadeIn(500);
 				$('.collections-view').fadeOut(500);
 			},
-			showPostView: function() {
-				logger('[View Changed] Post View', 'info');
+			showEditorView: function() {
+				logger('[View Changed] Editor View', 'info');
+
+				// TODO: fetch real post data and set post variable
+
+				// fill editor form with post data
+				$('.article-title').text(this.post.get('title'));
+				$('.article-subtitle').text(this.post.get('subtitle'));
+				$('.article-body').text(this.post.get('body'));
 
 				$('.reading-view').fadeOut(500);
 				$('.editor-view').fadeIn(500);
+			},
+			showPostView: function() {
+				logger('[View Changed] Post View', 'info');
+
+				// TODO: show selected post
+
+				$('.reading-view').fadeIn(500);
+				$('.editor-view').fadeOut(500);
 			}
 		});
 
