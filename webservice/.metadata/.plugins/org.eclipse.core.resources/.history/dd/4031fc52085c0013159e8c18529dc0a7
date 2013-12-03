@@ -97,7 +97,6 @@ public class DB_Connector {
 					+ "isDraft INT"
 					+ "views INT;");
 			stmt.execute("INSERT INTO Post VALUES ('my',1,'your','our','http',21212,2,false,2 )");
-			System.out.println("I was here");
 		} catch (SQLException e) {
             System.err.println("Couldn't handle DB-Query"); 
             e.printStackTrace(); 

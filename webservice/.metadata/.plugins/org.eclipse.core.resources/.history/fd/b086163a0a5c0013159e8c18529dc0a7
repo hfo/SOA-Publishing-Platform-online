@@ -15,17 +15,16 @@ import webservice.representations.Post;
 
 @Path("/posts")
 public class PostResource {
-	DB_Connector dbcon = DB_Connector.getInstance();
 	
 	  @GET
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public ArrayList<Post> getPosts(){
-		  return dbcon.getPosts();
+		  return DB_Connector.getInstance().getPosts();
 	  }
 	  @POST
 	  @Consumes(MediaType.APPLICATION_JSON)
 	  public boolean createPost(Post post){
-		  return dbcon.createPost(post);
+		  return DB_Connector.getInstance().createPost(post);
 	  }
 
 //	  @GET
