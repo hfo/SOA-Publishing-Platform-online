@@ -239,6 +239,6 @@ $(function() {
 		return {
 			// public functions go here
 		};
-
+		
 	}());
 });
