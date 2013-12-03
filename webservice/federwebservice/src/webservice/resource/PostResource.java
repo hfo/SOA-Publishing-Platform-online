@@ -1,0 +1,50 @@
+package webservice.resource;
+
+import java.util.ArrayList;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import webservice.database.DB_Connector;
+import webservice.representations.Post;
+
+@Path("/posts")
+public class PostResource {
+	
+	  @GET
+	  @Produces(MediaType.APPLICATION_JSON)
+	  public ArrayList<Post> getPosts(){
+		  return DB_Connector.getInstance().getPosts();
+	  }
+	  @POST
+	  @Consumes(MediaType.APPLICATION_JSON)
+	  public boolean createPost(Post post){
+		  return DB_Connector.getInstance().createPost(post);
+	  }
+
+	  @GET
+	  @Produces(MediaType.TEXT_HTML)
+	  public String sayHtmlHello() {
+	    return "<html> " + "<title>" + "Hello Jersey" + "</title>"
+	        + "<body><h1>" + "Hello Jersey1" + "</body></h1>" + "</html> ";
+	  }
+/*	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	//create new post generate ID
+
+	@PATH("posts/{ID}")
+	@GET
+	@Produces(MediaType.Application_JSON)
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)*/
+}

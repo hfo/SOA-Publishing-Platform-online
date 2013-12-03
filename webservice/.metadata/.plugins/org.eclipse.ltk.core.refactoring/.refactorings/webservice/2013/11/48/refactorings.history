@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;PostResource.java&apos; to &apos;de.vogella/src/webservice.resource&apos;&#x0D;&#x0A;- Original project: &apos;webservice&apos;&#x0D;&#x0A;- Destination element: &apos;de.vogella/src/webservice.resource&apos;&#x0D;&#x0A;- Original element: &apos;webservice.resources.PostResource.java&apos;" description="Copy compilation unit" destination="=de.vogella/src&lt;webservice.resource" element1="/src&lt;webservice.resources{PostResource.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1385711096444" units="1" version="1.0"/>
+</session>

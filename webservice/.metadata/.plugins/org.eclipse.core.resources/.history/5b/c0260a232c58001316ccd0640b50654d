@@ -1,0 +1,10 @@
+package representations;
+
+public class Collection {
+
+	private int ID;
+	private String title;
+	private String image;
+	private int views;
+	private int posts;
+}
