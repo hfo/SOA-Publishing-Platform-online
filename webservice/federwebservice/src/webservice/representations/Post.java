@@ -27,6 +27,27 @@ public class Post {
 		setViews(v);
 		
 	}
+	@Override
+	public String toString(){
+		String postString= new String();
+		int draft=0;
+		if(this.isDraft){
+			draft=1;
+		}
+		postString="\"User\":{"
+							+"\"id\":"+"\""+String.valueOf(this.getID())+"\","
+							+"\"title\":"+"\""+this.getTitle()+"\","
+							+"\"authorId\":"+"\""+String.valueOf(this.getAuthorID())+"\","
+							+"\"subtitle\":"+"\""+this.getSubtitle()+"\","
+							+"\"body\":"+"\""+this.getBody()+"\","
+							+"\"image\":"+"\""+this.getImage()+"\","
+							+"\"creationDate\":"+"\""+this.getCreationDate().toString()+"\","
+							+"\"collectionId\":"+"\""+String.valueOf(this.getCollectionID())+"\","
+							+"\"isDraft\":"+"\""+String.valueOf(draft)+"\","
+							+"\"views\":"+"\""+String.valueOf(this.getViews())+"\"}";
+		return postString;
+		
+	}
 	public int getID() {
 		return ID;
 	}

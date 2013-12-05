@@ -4,6 +4,10 @@
 <fullyQualifiedTypeName name="database.DB_Connector"/>
 <fullyQualifiedTypeName name="representations.User"/>
 <fullyQualifiedTypeName name="representations.Post"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="representations.Collection"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="webservice.representations.Post"/>
+<fullyQualifiedTypeName name="webservice.database.DB_Connector"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
 </qualifiedTypeNameHistroy>

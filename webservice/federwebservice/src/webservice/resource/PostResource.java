@@ -1,6 +1,7 @@
 package webservice.resource;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -19,8 +20,26 @@ public class PostResource {
 	
 	  @GET
 	  @Produces(MediaType.APPLICATION_JSON)
-	  public ArrayList<Post> getPosts(){
-		  return dbcon.getPosts();
+	  public String getPosts(){
+		  String posts = new String();
+		  posts="{";
+		  dbcon.initDBConnection();
+		  ArrayList<Post> list = dbcon.getPosts();
+		  int size = list.size()-1;
+		  if(size<=0){
+			    posts=posts+"}";	
+			}
+		  for ( Iterator<Post> i = list.iterator(); i.hasNext(); )
+		  {
+			if(size==0){
+			    posts=posts+i.next().toString()+"}";	
+			}
+			else{
+				posts=posts+i.next().toString()+",";
+			}
+		    size=size-1;
+		  }
+		  return posts;
 	  }
 	  @POST
 	  @Consumes(MediaType.APPLICATION_JSON)

@@ -31,18 +31,15 @@ public class DB_Connector {
      
     private DB_Connector(){ 
     	
-    	createTableUser();
-    	createTablePost();
-    	createTableComment();
-    	createTableCollection();
-    	initDBConnection();
+
+
     } 
      
     public static DB_Connector getInstance(){ 
         return dbcon; 
     } 
      
-    private void initDBConnection() { 
+    public void initDBConnection() { 
         try { 
             if (connection != null) 
                 return; 
@@ -50,6 +47,10 @@ public class DB_Connector {
             connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH); 
             if (!connection.isClosed()) 
                 System.out.println("...Connection established"); 
+        	createTableUser();
+        	createTablePost();
+        	createTableComment();
+        	createTableCollection();
         } catch (SQLException e) { 
             throw new RuntimeException(e); 
         } 
@@ -72,11 +73,11 @@ public class DB_Connector {
     public void createTableUser(){
     	try {
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS User("
-					+ "id INT PRIMARY KEY AUTOINCREMENT"
-					+ "username CHAR(25)"
-					+ "password CHAR(25)"
-					+ "email CHAR;");
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS USER("
+					+ "id INT PRIMARY KEY AUTOINCREMENT,"
+					+ "username CHAR(25),"
+					+ "password CHAR(25),"
+					+ "email CHAR);");
 		} catch (SQLException e) {
             System.err.println("Couldn't handle DB-Query"); 
             e.printStackTrace(); 
@@ -85,21 +86,21 @@ public class DB_Connector {
     public void createTablePost(){
     	try {
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Post("
-					+ "id INT PRIMARY KEY AUTOINCREMENT"
-					+ "title CHAR"
-					+ "authorID INT"
-					+ "subtitle CHAR"
-					+ "body TEXT"
-					+ "image CHAR"
-					+ "creationDate NONE"
-					+ "collectionID INT"
-					+ "isDraft INT"
-					+ "views INT;");
-			stmt.execute("INSERT INTO Post VALUES ('my',1,'your','our','http',21212,2,false,2 )");
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS POST("
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "title CHAR,"
+					+ "authorID INTEGER,"
+					+ "subtitle CHAR,"
+					+ "body TEXT,"
+					+ "image CHAR,"
+					+ "creationDate NONE,"
+					+ "collectionID INTEGER,"
+					+ "isDraft INTEGER,"
+					+ "views INTEGER);");
+			stmt.execute("INSERT INTO POST (title,authorID,subtitle,body,image,creationDate,collectionID,isDraft,views) VALUES ('my',1,'your','our','http',21212,2,0,2 )");
 			System.out.println("I was here");
 		} catch (SQLException e) {
-            System.err.println("Couldn't handle DB-Query"); 
+            System.err.println("Couldn't create table Post"); 
             e.printStackTrace(); 
 		}
     	
@@ -107,14 +108,14 @@ public class DB_Connector {
     public void createTableComment(){
     	try {
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment("
-					+ "id INT PRIMARY KEY AUTOINCREMENT"
-					+ "authorID INT"
-					+ "postID INT"
-					+ "body TEXT"
-					+ "creationDate NONE;");
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS COMMENT("
+					+ "id INT PRIMARY KEY AUTOINCREMENT,"
+					+ "authorID INT,"
+					+ "postID INT,"
+					+ "body TEXT,"
+					+ "creationDate NONE);");
 		} catch (SQLException e) {
-            System.err.println("Couldn't handle DB-Query"); 
+            System.err.println("Couldn't create table Comment"); 
             e.printStackTrace(); 
 		}
     	
@@ -122,14 +123,14 @@ public class DB_Connector {
     public void createTableCollection(){
     	try {
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Comment("
-					+ "id INT PRIMARY KEY AUTOINCREMENT"
-					+ "title CHAR"
-					+ "image CHAR"
-					+ "views INT"
-					+ "posts INT;");
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS COLLECTION("
+					+ "id INT PRIMARY KEY AUTOINCREMENT,"
+					+ "title CHAR,"
+					+ "image CHAR,"
+					+ "views INT,"
+					+ "posts INT);");
 		} catch (SQLException e) {
-            System.err.println("Couldn't handle DB-Query"); 
+            System.err.println("Couldn't create table Collection"); 
             e.printStackTrace(); 
 		}
     	
