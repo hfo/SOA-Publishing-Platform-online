@@ -132,6 +132,8 @@ $(function() {
 				this.collections.models = _.sortBy(this.collections.models, function(o) { return o.get('views'); });
 				this.collections.models.reverse();
 
+				grande.bind(document.querySelectorAll("article"));
+
 				// set up medium.js for editor view
 				new Medium({
 	                element: document.getElementById('article-title'),
