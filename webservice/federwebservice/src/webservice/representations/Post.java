@@ -2,19 +2,31 @@ package webservice.representations;
 
 import java.sql.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.owlike.genson.annotation.JsonIgnore;
+import com.owlike.genson.annotation.JsonProperty;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Post {
-	private int ID;
-	private String title;
-	private int authorID;
-	private String subtitle;
-	private String body;
-	private String image;
-	private Date creationDate;
-	private int collectionID;
-	private boolean isDraft;
-	private int views;
+	@JsonIgnore private int ID;
+	@JsonProperty("title")private String title;
+	@JsonProperty("authorID")private int authorID;
+	@JsonProperty("subtitle")private String subtitle;
+	@JsonProperty("body")private String body;
+	@JsonProperty("image")private String image;
+	@JsonProperty ("creationDate")private String creationDate;
+	@JsonProperty("collectionId")private int collectionID;
+	@JsonProperty("isDraft") private int isDraft;
+	@JsonProperty("views")private int views;
 	
-	public Post(int i,String t, int ai, String s, String b, String img, Date d, int ci, boolean isD, int v){
+	public Post(){
+		
+	}
+	public Post(int i,String t, int ai, String s, String b, String img, String d, int ci, int isD, int v){
 		setID(i);
 		setTitle(t);
 		setAuthorID(ai);
@@ -23,27 +35,24 @@ public class Post {
 		setImage(img);
 		setCreationDate(d);
 		setCollectionID(ci);
-		setDraft(isD);
+		setIsDraft(isD);
 		setViews(v);
 		
 	}
 	@Override
 	public String toString(){
 		String postString= new String();
-		int draft=0;
-		if(this.isDraft){
-			draft=1;
-		}
-		postString="\"User\":{"
+
+		postString="\"Post\":{"
 							+"\"id\":"+"\""+String.valueOf(this.getID())+"\","
 							+"\"title\":"+"\""+this.getTitle()+"\","
 							+"\"authorId\":"+"\""+String.valueOf(this.getAuthorID())+"\","
 							+"\"subtitle\":"+"\""+this.getSubtitle()+"\","
 							+"\"body\":"+"\""+this.getBody()+"\","
 							+"\"image\":"+"\""+this.getImage()+"\","
-							+"\"creationDate\":"+"\""+this.getCreationDate().toString()+"\","
+							+"\"creationDate\":"+"\""+this.getCreationDate()+"\","
 							+"\"collectionId\":"+"\""+String.valueOf(this.getCollectionID())+"\","
-							+"\"isDraft\":"+"\""+String.valueOf(draft)+"\","
+							+"\"isDraft\":"+"\""+String.valueOf(this.getIsDraft())+"\","
 							+"\"views\":"+"\""+String.valueOf(this.getViews())+"\"}";
 		return postString;
 		
@@ -84,10 +93,10 @@ public class Post {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public Date getCreationDate() {
+	public String getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
 	}
 	public int getCollectionID() {
@@ -96,10 +105,10 @@ public class Post {
 	public void setCollectionID(int collectionID) {
 		this.collectionID = collectionID;
 	}
-	public boolean isDraft() {
+	public int getIsDraft() {
 		return isDraft;
 	}
-	public void setDraft(boolean isDraft) {
+	public void setIsDraft(int isDraft) {
 		this.isDraft = isDraft;
 	}
 	public int getViews() {

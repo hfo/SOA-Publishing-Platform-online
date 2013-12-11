@@ -10,12 +10,28 @@ public class Comment {
 	private String body;
 	private Date creationDate;
 	
+	public Comment(){
+		
+	}
 	public Comment(int i, int ai, int pi, String b, Date cd){
 		setID(i);
 		setAuthorID(ai);
 		setPostID(pi);
 		setBody(b);
 		setCreationDate(cd);
+		
+	}
+	@Override
+	public String toString(){
+		String commentString= new String();
+
+		commentString="\"Comment\":{"
+							+"\"id\":"+"\""+String.valueOf(this.getID())+"\","
+							+"\"authorId\":"+"\""+String.valueOf(this.getAuthorID())+"\","
+							+"\"postId\":"+"\""+String.valueOf(this.getPostID())+"\","
+							+"\"body\":"+"\""+this.getBody()+"\","
+							+"\"creationDate\":"+"\""+this.getCreationDate().toString()+"\"}";
+		return commentString;
 		
 	}
 	public int getID() {

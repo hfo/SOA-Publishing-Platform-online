@@ -1,0 +1,72 @@
+package webservice.resource;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+
+
+import webservice.database.DB_Connector;
+//import webservice.database.DB_Connector;
+import webservice.representations.Collection;
+import webservice.representations.Post;
+
+@Path("collections")
+public class CollectionResource {
+	DB_Connector dbcon = DB_Connector.getInstance();
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getCollections(){
+		  String collections = new String();
+		  collections="{";
+		  dbcon.initDBConnection();
+		  ArrayList<Collection> list = dbcon.getCollections();
+		  int size = list.size()-1;
+		  if(size<0){
+			  collections=collections+"}";	
+			}
+		  for ( Iterator<Collection> i = list.iterator(); i.hasNext(); )
+		  {
+			if(size==0){
+				collections=collections+i.next().toString()+"}";	
+			}
+			else{
+				collections=collections+i.next().toString()+",";
+			}
+		    size=size-1;
+		  }
+		  return collections;
+	  }
+/*	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	//create new Collection and generate ID
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	//Delete Collection
+	
+	@Path("{id}")
+	@PathParam("id")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	//return post wih ID
+	
+	@Path("collections/{ID}/posts")
+	@PathParam("id")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)*/
+	//return list of postIDs
+	
+}

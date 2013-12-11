@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException; 
 import java.sql.Statement; 
 import java.util.ArrayList;
+import java.util.List;
 
 import webservice.representations.Collection;
 import webservice.representations.Comment;
@@ -53,22 +54,19 @@ public class DB_Connector {
         	createTableCollection();
         } catch (SQLException e) { 
             throw new RuntimeException(e); 
-        } 
-
-        Runtime.getRuntime().addShutdownHook(new Thread() { 
-            public void run() { 
-                try { 
-                    if (!connection.isClosed() && connection != null) { 
-                        connection.close(); 
-                        if (connection.isClosed()) 
-                            System.out.println("Connection to Database closed"); 
-                    } 
-                } catch (SQLException e) { 
-                    e.printStackTrace(); 
-                } 
-            } 
-        }); 
-    } 
+        }
+    }
+     public void closeDBConnection(){
+    	 try { 
+             if (!connection.isClosed() && connection != null) { 
+                 connection.close(); 
+                 if (connection.isClosed()) 
+                     System.out.println("Connection to Database closed"); 
+             } 
+         } catch (SQLException e) { 
+             e.printStackTrace(); 
+         } 
+     }
     
     public void createTableUser(){
     	try {
@@ -78,6 +76,7 @@ public class DB_Connector {
 					+ "username CHAR(25),"
 					+ "password CHAR(25),"
 					+ "email CHAR);");
+			System.out.println("enterd user table");
 		} catch (SQLException e) {
             System.err.println("Couldn't handle DB-Query"); 
             e.printStackTrace(); 
@@ -97,8 +96,7 @@ public class DB_Connector {
 					+ "collectionID INTEGER,"
 					+ "isDraft INTEGER,"
 					+ "views INTEGER);");
-			stmt.execute("INSERT INTO POST (title,authorID,subtitle,body,image,creationDate,collectionID,isDraft,views) VALUES ('my',1,'your','our','http',21212,2,0,2 )");
-			System.out.println("I was here");
+			System.out.println("enterd post table");
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Post"); 
             e.printStackTrace(); 
@@ -114,6 +112,7 @@ public class DB_Connector {
 					+ "postID INT,"
 					+ "body TEXT,"
 					+ "creationDate NONE);");
+			System.out.println("enterd user comment");
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Comment"); 
             e.printStackTrace(); 
@@ -129,6 +128,7 @@ public class DB_Connector {
 					+ "image CHAR,"
 					+ "views INT,"
 					+ "posts INT);");
+			System.out.println("enterd collection table");
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Collection"); 
             e.printStackTrace(); 
@@ -237,7 +237,7 @@ public class DB_Connector {
     }
     public boolean createUser(User user){
     	try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO USER "
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO USER (username,password,email)"
 					+ "VALUES (?,?,?)");
 			stmt.setString(1, user.getUsername());
 			stmt.setString(2, user.getPassword());
@@ -294,11 +294,11 @@ public class DB_Connector {
 				String subtitle = rs.getString("subtitle");
 				String body = rs.getString("body");
 				String image = rs.getString("image");
-				Date creationDate = rs.getDate("creationDate");
+				String creationDate = rs.getString("creationDate");
 				int collectionID = rs.getInt("collectionID");
-				boolean isDraft = rs.getBoolean("isDraft");
+				int isDraftInt  = rs.getInt("isDraft");
 				int views = rs.getInt("views");
-				Post post = new Post(id, title, authID, subtitle, body, image, creationDate, collectionID, isDraft, views);
+				Post post = new Post(id, title, authID, subtitle, body, image, creationDate, collectionID, isDraftInt, views);
 				PostsInDB.add(post);
 				
 			}
@@ -313,6 +313,7 @@ public class DB_Connector {
 		}
     	
     }
+
     public ArrayList<Post> getPostsByCollection(int collID){
     	ArrayList<Post> PostsInDB = new ArrayList<Post>();
     	PreparedStatement stmt;
@@ -330,9 +331,9 @@ public class DB_Connector {
 				String subtitle = rs.getString("subtitle");
 				String body = rs.getString("body");
 				String image = rs.getString("image");
-				Date creationDate = rs.getDate("creationDate");
+				String creationDate = rs.getString("creationDate");
 				int collectionID = rs.getInt("collectionID");
-				boolean isDraft = rs.getBoolean("isDraft");
+				int isDraft = rs.getInt("isDraft");
 				int views = rs.getInt("views");
 				Post post = new Post(id, title, authID, subtitle, body, image, creationDate, collectionID, isDraft, views);
 				PostsInDB.add(post);
@@ -366,9 +367,9 @@ public class DB_Connector {
 				String subtitle = rs.getString("subtitle");
 				String body = rs.getString("body");
 				String image = rs.getString("image");
-				Date creationDate = rs.getDate("creationDate");
+				String creationDate = rs.getString("creationDate");
 				int collectionID = rs.getInt("collectionID");
-				boolean isDraft = rs.getBoolean("isDraft");
+				int isDraft = rs.getInt("isDraft");
 				int views = rs.getInt("views");
 				Post post = new Post(id, title, authID, subtitle, body, image, creationDate, collectionID, isDraft, views);
 				PostsInDB.add(post);
@@ -403,9 +404,9 @@ public class DB_Connector {
 				String subtitle = rs.getString("subtitle");
 				String body = rs.getString("body");
 				String image = rs.getString("image");
-				Date creationDate = rs.getDate("creationDate");
+				String creationDate = rs.getString("creationDate");
 				int collectionID = rs.getInt("collectionID");
-				boolean isDraft = rs.getBoolean("isDraft");
+				int isDraft = rs.getInt("isDraft");
 				int views = rs.getInt("views");
 				post = new Post(id, title, authID, subtitle, body, image, creationDate, collectionID, isDraft, views);
 				counter=counter+1;
@@ -438,16 +439,16 @@ public class DB_Connector {
     }
     public boolean createPost(Post post){
     	try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO POST "
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO POST (title,authorID,subtitle,body,image,creationDate,collectionID,isDraft,views)"
 					+ "VALUES (?,?,?,?,?,?,?,?,?)");
 			stmt.setString(1, post.getTitle());
 			stmt.setInt(2, post.getAuthorID());
 			stmt.setString(3, post.getSubtitle());
 			stmt.setString(4, post.getBody());
 			stmt.setString(5, post.getImage());
-			stmt.setDate(6, post.getCreationDate());
+			stmt.setString(6, post.getCreationDate());
 			stmt.setInt(7, post.getCollectionID());
-			stmt.setBoolean(8, post.isDraft());
+			stmt.setInt(8, post.getIsDraft());
 			stmt.setInt(9, post.getViews());
 			stmt.execute();
 			stmt.close();
@@ -473,7 +474,7 @@ public class DB_Connector {
 			stmt.setString(3, post.getBody());
 			stmt.setString(4, post.getImage());
 			stmt.setInt(5, post.getCollectionID());
-			stmt.setBoolean(6, post.isDraft());
+			stmt.setInt(6, post.getIsDraft());
 			stmt.execute();
 			stmt.close();
 			return true;
@@ -518,7 +519,7 @@ public class DB_Connector {
     }
     public boolean createComment(Comment comment){
     	try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COMMENT "
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COMMENT (authorID,postID,body,creationDate)"
 					+ "VALUES (?,?,?,?)");
 			stmt.setInt(1, comment.getAuthorID());
 			stmt.setInt(2, comment.getPostID());
@@ -565,6 +566,8 @@ public class DB_Connector {
     public ArrayList<Collection> getCollectionsByName(String name){
     	ArrayList<Collection> CollectionsInDB = new ArrayList<Collection>();
     	PreparedStatement stmt;
+    	System.out.println(name);
+    	System.out.println(CollectionsInDB);
     	try {
 			stmt= connection.prepareStatement( "SELECT * FROM COLLECTION WHERE title=?;");
 			stmt.setString(1, name);
@@ -583,6 +586,7 @@ public class DB_Connector {
 	        }
 	        rs.close();
 	        stmt.close();
+	        System.out.println(CollectionsInDB);
 	        return CollectionsInDB;
 	        
 		} catch (SQLException e) {
@@ -599,7 +603,7 @@ public class DB_Connector {
     }*/
     public boolean createCollection(Collection collection){
     	try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COLLECTION "
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COLLECTION (title,image,views,posts) "
 					+ "VALUES (?,?,?,?)");
 			stmt.setString(1, collection.getTitle());
 			stmt.setString(2, collection.getImage());
@@ -607,6 +611,7 @@ public class DB_Connector {
 			stmt.setInt(4, collection.getPosts());
 			stmt.execute();
 			stmt.close();
+			System.out.println("collection created title"+collection.getTitle()+" Image"+collection.getImage()+" Views:"+collection.getViews()+" Posts:"+collection.getPosts());
 			return true;
 			
 		} catch (SQLException e) {

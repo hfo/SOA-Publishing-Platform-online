@@ -1,18 +1,40 @@
 package webservice.representations;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.owlike.genson.annotation.JsonIgnore;
+import com.owlike.genson.annotation.JsonProperty;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class User {
 	
-	private int ID;
-	private String username;
-	private String password;
-	private String email;
+	@JsonProperty("id") private int ID;
+	@JsonProperty private String username;
+	@JsonProperty private String password;
+	@JsonIgnore private String email;
 	
+	public User(){
+		
+	}
 	public User(int i, String u, String e){
 		setID(i);
 		setUsername(u);
 		setEmail(e);
 	}
-	
+	@Override
+	public String toString(){
+		String userString= new String();
+
+		userString="\"Post\":{"
+							+"\"id\":"+"\""+String.valueOf(this.getID())+"\","
+							+"\"username\":"+"\""+this.getUsername()+"\","
+							+"\"email\":"+"\""+this.getEmail()+"\"}";
+		return userString;
+		
+	}
 	public User(int i, String u, String p, String e){
 		
 	}

@@ -1,0 +1,64 @@
+package webservice.resource;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.Path;
+
+
+
+import webservice.database.DB_Connector;
+import webservice.representations.Post;
+//import webservice.database.DB_Connector;
+import webservice.representations.User;
+@Path("users")
+public class UserResource {
+	DB_Connector dbcon = DB_Connector.getInstance();
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUsers(){
+		  String users = new String();
+		  users="{";
+		  dbcon.initDBConnection();
+		  ArrayList<User> list = dbcon.getUsers();
+		  int size = list.size()-1;
+		  if(size<=0){
+			    users=users+"}";	
+			}
+		  for ( Iterator<User> i = list.iterator(); i.hasNext(); )
+		  {
+			if(size==0){
+			    users=users+i.next().toString()+"}";	
+			}
+			else{
+				users=users+i.next().toString()+",";
+			}
+		    size=size-1;
+		  }
+		  return users;
+	  }
+/*	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	//create new user generate ID
+	
+	@PATH("users/{id}")
+	@GET
+
+	
+	
+	@PUT
+	
+	@DELETE
+	
+	@PATH("users/{ID}/posts")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)*/
+}

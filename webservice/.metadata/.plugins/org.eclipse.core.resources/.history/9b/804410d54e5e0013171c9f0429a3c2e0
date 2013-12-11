@@ -1,0 +1,60 @@
+package messageBodyWriter;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
+
+import webservice.representations.Collection;
+
+@Provider
+@Produces(MediaType.APPLICATION_JSON)
+public class CollectionMessageBodyWriter implements MessageBodyWriter<Collection>{
+
+	@Override
+	public long getSize(Collection collection, Class<?> type, Type type1,
+			Annotation[] antns, MediaType mt) {
+		return -1;
+	}
+
+	@Override
+	public boolean isWriteable(Class<?> type, Type type1, Annotation[] antns,
+			MediaType type3) {
+		return true;
+	}
+
+	@Override
+	public void writeTo(Collection collection, Class<?> type, Type type1,
+			Annotation[] antns, MediaType mt,
+			MultivaluedMap<String, Object> mm, OutputStream out)
+			throws IOException, WebApplicationException {
+		StringBuffer buffer = new StringBuffer();
+		 
+        buffer = buffer.append("{");
+        buffer = buffer.append("\"id\":\"").append(t.getId()).append("\",");
+        buffer = buffer.append("\"name\":\"").append(t.getName()).append("\",");
+        buffer = buffer.append("\"description\":\"").append(t.getDescription()).append("\"");
+        buffer = buffer.append("}");
+        try (PrintStream printStream = new PrintStream(out)) {
+            printStream.print(buffer.toString());
+        }
+        return;
+        else if(mt.getType().equals("text") && mt.getSubtype().equals("plain")) {
+        try (PrintStream printStream = new PrintStream(out)) {
+            printStream.print((t.getId()+"/"+t.getName()+"/"+t.getDescription()));
+        }
+        return;
+    }
+    throw new UnsupportedOperationException("Not supported MediaType: " + mt);
+		
+	}
+
+}

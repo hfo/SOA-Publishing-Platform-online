@@ -1,21 +1,47 @@
 package webservice.representations;
 
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.owlike.genson.annotation.JsonIgnore;
+import com.owlike.genson.annotation.JsonProperty;
+
+
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Collection {
 
-	private int ID;
-	private String title;
-	private String image;
-	private int views;
-	private int posts;
+	@JsonIgnore private int ID;
+	@JsonProperty("title") public String title;
+	@JsonProperty("image") public String image;
+	@JsonProperty("views") public int views;
+	@JsonProperty("posts") public int posts;
 	
+	public Collection(){
+		
+	}
 	public Collection(int i, String t, String img, int v, int p){
-		setID(i);
-		setTitle(t);
-		setImage(img);
-		setViews(v);
-		setPosts(p);		
+		this.setID(i);
+		this.setTitle(t);
+		this.setImage(img);
+		this.setViews(v);
+		this.setPosts(p);		
 	}
 	
+	@Override
+	public String toString(){
+		String collectionString= new String();
+		collectionString="\"Collection\":{"
+							+"\"id\":"+"\""+String.valueOf(this.getID())+"\","
+							+"\"title\":"+"\""+this.getTitle()+"\","
+							+"\"image\":"+"\""+this.getImage()+"\","
+							+"\"views\":"+"\""+String.valueOf(this.getViews())+"\","
+							+"\"posts\":"+"\""+String.valueOf(this.getPosts())+"\"}";
+		return collectionString;
+		
+	}
 	public int getID() {
 		return ID;
 	}

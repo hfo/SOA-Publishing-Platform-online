@@ -1,0 +1,47 @@
+package messageBodyWriter;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
+import java.util.Scanner;
+import javax.ws.rs.ext.Provider;
+import webservice.representations.Collection;
+
+@Provider
+@Consumes(MediaType.APPLICATION_JSON)
+public class CollectionMessageBodyReader implements MessageBodyReader<Collection> {
+ 
+    @Override
+    public boolean isReadable(Class<?> type, Type type1, Annotation[] antns, MediaType mt) {
+        return true;
+    }
+ 
+    @Override
+    public Collection readFrom(Class<Collection> type, Type type1, Annotation[] antns, MediaType mt, MultivaluedMap<String, String> mm, InputStream in) throws IOException, WebApplicationException {
+        if (mt.getType().equals("application") && mt.getSubtype().equals("json")) {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(in, Collection.class);
+        } else if (mt.getType().equals("text") && mt.getSubtype().equals("plain")) {
+            Scanner scanner = new Scanner(in).useDelimiter("/");
+            String id = scanner.next();
+            String name = scanner.next();
+            String description = scanner.next();
+            Collection collection = new Collection(id,name,description);
+            return collection;
+        }
+        throw new UnsupportedOperationException("Not supported MediaType: " + mt);
+    }
+
+}
+
+}
