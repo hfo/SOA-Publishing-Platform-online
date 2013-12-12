@@ -1,9 +1,7 @@
 package webservice.resource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,22 +9,8 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-
-
-
-
-
-
-
-import javax.ws.rs.core.UriInfo;
-
-import com.sun.jersey.spi.resource.Singleton;
-
 import webservice.database.DB_Connector;
-//import webservice.database.DB_Connector;
 import webservice.representations.Collection;
 import webservice.representations.Post;
 
@@ -38,57 +22,71 @@ public class CollectionResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Collection> getCollections(){
-		  dbcon.initDBConnection();
+		dbcon.initDBConnection();
 		  ArrayList<Collection> list = dbcon.getCollections();
-		  System.out.println("used method getcollections");
-		  dbcon.closeDBConnection();
+		  System.out.println("used method getCollections");
 		  return list;
 		  
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void createCollection(Collection collection){
+	public boolean createCollection(Collection collection){
 		dbcon.initDBConnection();
-		System.out.println(collection.toString());
-		dbcon.createCollection(collection);
-		dbcon.closeDBConnection();
+		System.out.println("used method createCollection");
+		return dbcon.createCollection(collection);
+
 	}
+
 	
 	@GET
-	@Path("?filter={name}")
+	@Path("/filter={name}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Collection> getCollectionByName(@PathParam("name") String name){
-		if(name.length()==0){System.out.println("noName handed over");}
-		else{System.out.println(name);}
-		
 		dbcon.initDBConnection();
 		ArrayList<Collection> list = dbcon.getCollectionsByName(name);
-		System.out.println("used method getcollectionsbyname");
-		dbcon.closeDBConnection();
+		System.out.println("used method getCollectionsByName");
 		return list;
 	  }
-	
-
-/*	
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	
-	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	//Delete Collection
-*/	
-
-	
+		
 	
 	@GET
-	@Path("collections/{ID}/posts")
+	@Path("/{id}/posts")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Post> getPostsByCollection(@PathParam("id") int id){
-		  dbcon.initDBConnection();
-		  ArrayList<Post> list = dbcon.getPostsByCollection(id);
+		dbcon.initDBConnection();
+		ArrayList<Post> list = dbcon.getPostsByCollection(id);
+		System.out.println("used method getPostsByCollection");
 		return list;
 	  }
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Collection getCollectionByID(@PathParam("id") int id){
+		dbcon.initDBConnection();
+		Collection collection = dbcon.getSingleCollection(id);
+		System.out.println("used method getSingleCollection");
+		return collection;
+	}
+	
+	@PUT
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean changeCollection(@PathParam("id") int id, Collection collection){
+		dbcon.initDBConnection();
+		System.out.println("used method changeCollection");
+		collection.setID(id);
+		return dbcon.changeCollection(collection);
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	public boolean deleteCollection(@PathParam("id") int id){
+		dbcon.initDBConnection();
+		System.out.println("used method deleteCollection");
+		return dbcon.deleteCollection(id);
+	}
 }
 
 	

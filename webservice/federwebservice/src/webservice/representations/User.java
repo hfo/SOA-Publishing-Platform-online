@@ -14,7 +14,7 @@ public class User {
 	@JsonProperty("id") private int ID;
 	@JsonProperty private String username;
 	@JsonProperty private String password;
-	@JsonIgnore private String email;
+	@JsonProperty private String email;
 	
 	public User(){
 		

@@ -7840,3 +7840,21 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 !MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\jersey-server-1.7.jar. May be locked by another process.
 !SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 09:33:23.506
 !MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\sqlite-jdbc-3.7.2.jar. May be locked by another process.
+
+!ENTRY org.eclipse.jst.server.tomcat.core 4 0 2013-12-12 09:52:05.347
+!MESSAGE Publishing failed with multiple errors
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 09:52:05.347
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\jersey-core-1.7.jar. May be locked by another process.
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 09:52:05.347
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\jersey-server-1.7.jar. May be locked by another process.
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 09:52:05.347
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\sqlite-jdbc-3.7.2.jar. May be locked by another process.
+
+!ENTRY org.eclipse.jst.server.tomcat.core 4 0 2013-12-12 10:13:54.889
+!MESSAGE Publishing failed with multiple errors
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 10:13:54.889
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\jersey-core-1.7.jar. May be locked by another process.
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 10:13:54.889
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\jersey-server-1.7.jar. May be locked by another process.
+!SUBENTRY 1 org.eclipse.wst.server.core 4 0 2013-12-12 10:13:54.889
+!MESSAGE Could not delete C:\Users\Heiko\Documents\GitHub\SOA-Publishing-Platform-online\webservice\.metadata\.plugins\org.eclipse.wst.server.core\tmp1\wtpwebapps\federwebservice\WEB-INF\lib\sqlite-jdbc-3.7.2.jar. May be locked by another process.

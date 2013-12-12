@@ -1,7 +1,5 @@
 package webservice.representations;
 
-import java.sql.Date;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,7 +12,7 @@ import com.owlike.genson.annotation.JsonProperty;
 public class Post {
 	@JsonIgnore private int ID;
 	@JsonProperty("title")private String title;
-	@JsonProperty("authorID")private int authorID;
+	@JsonProperty("authorId")private int authorID;
 	@JsonProperty("subtitle")private String subtitle;
 	@JsonProperty("body")private String body;
 	@JsonProperty("image")private String image;

@@ -1,19 +1,25 @@
 package webservice.representations;
 
-import java.sql.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import com.owlike.genson.annotation.JsonProperty;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Comment {
 
-	private int ID;
-	private int authorID;
-	private int postID;
-	private String body;
-	private Date creationDate;
+	@JsonProperty("id") private int ID;
+	@JsonProperty("authorId") private int authorID;
+	@JsonProperty("postId") private int postID;
+	@JsonProperty("body") private String body;
+	@JsonProperty("creationDate") private String creationDate;
 	
 	public Comment(){
 		
 	}
-	public Comment(int i, int ai, int pi, String b, Date cd){
+	public Comment(int i, int ai, int pi, String b, String cd){
 		setID(i);
 		setAuthorID(ai);
 		setPostID(pi);
@@ -58,10 +64,10 @@ public class Comment {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	public Date getCreationDate() {
+	public String getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
 	}
 }

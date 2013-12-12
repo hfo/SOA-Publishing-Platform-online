@@ -1,24 +1,17 @@
 package webservice.resource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.Path;
-
-
-
-
-
 import webservice.database.DB_Connector;
-import webservice.representations.Collection;
 import webservice.representations.Post;
-//import webservice.database.DB_Connector;
 import webservice.representations.User;
 
 @Path("users")
@@ -31,25 +24,66 @@ public class UserResource {
 		  dbcon.initDBConnection();
 		  ArrayList<User> list = dbcon.getUsers();
 		  System.out.println("used method getUsers");
-		  System.out.println(list);
-		  dbcon.closeDBConnection();
 		  return list;
-	  }
-/*	
+	}
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	//create new user generate ID
+	public boolean createUser(User user){
+		dbcon.initDBConnection();
+		System.out.println("used method createUser");
+		return dbcon.createUser(user);
+	}
 	
-	@PATH("users/{id}")
+	
+	
 	@GET
-
+	@Path("/filter={name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<User> getUsersByName(@PathParam("name") String name){
+		dbcon.initDBConnection();
+		ArrayList<User> list = dbcon.getUsersByName(name);
+		System.out.println("used method getUsersByName");
+		return list;
+	}
 	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User getSingleUser(@PathParam("id") int id){
+		dbcon.initDBConnection();
+		User user = dbcon.getSingleUser(id);
+		System.out.println("used method getSingleUser");
+		return user;
+	}
 	
 	@PUT
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean changeUser(@PathParam("id") int id, User user){
+		dbcon.initDBConnection();
+		user.setID(id);
+		System.out.println("used method changeUser");
+		return dbcon.changeUser(user);
+	}
 	
 	@DELETE
+	@Path("/{id}")
+	public boolean deleteUser(@PathParam("id") int id){
+		dbcon.initDBConnection();
+		System.out.println("used method deleteUser");
+		return dbcon.deleteUser(id);
+	}
 	
-	@PATH("users/{ID}/posts")
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)*/
+	@Path("/{id}/posts")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Post> getPostsByUser(@PathParam("id") int id){
+		dbcon.initDBConnection();
+		ArrayList<Post> list = dbcon.getPostsByUser(id);
+		System.out.println("used method getPostsByUser");
+		return list;
+	}
+
+
 }

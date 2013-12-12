@@ -1,15 +1,12 @@
 package webservice.database;
 
 import java.sql.Connection; 
-import java.sql.Date; 
 import java.sql.DriverManager; 
 import java.sql.PreparedStatement; 
 import java.sql.ResultSet; 
 import java.sql.SQLException; 
 import java.sql.Statement; 
 import java.util.ArrayList;
-import java.util.List;
-
 import webservice.representations.Collection;
 import webservice.representations.Comment;
 import webservice.representations.Post;
@@ -31,8 +28,6 @@ public class DB_Connector {
     } 
      
     private DB_Connector(){ 
-    	
-
 
     } 
      
@@ -42,7 +37,7 @@ public class DB_Connector {
      
     public void initDBConnection() { 
         try { 
-            if (connection != null) 
+            if (connection!=null)//connection != null 
                 return; 
             System.out.println("Creating Connection to Database..."); 
             connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH); 
@@ -52,7 +47,8 @@ public class DB_Connector {
         	createTablePost();
         	createTableComment();
         	createTableCollection();
-        } catch (SQLException e) { 
+        } catch (SQLException e) {
+        	System.out.println("Fehler bei initDB");
             throw new RuntimeException(e); 
         }
     }
@@ -70,20 +66,24 @@ public class DB_Connector {
     
     public void createTableUser(){
     	try {
+
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS USER("
-					+ "id INT PRIMARY KEY AUTOINCREMENT,"
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "username CHAR(25),"
 					+ "password CHAR(25),"
 					+ "email CHAR);");
 			System.out.println("enterd user table");
+
 		} catch (SQLException e) {
             System.err.println("Couldn't handle DB-Query"); 
             e.printStackTrace(); 
+
 		}
     }
     public void createTablePost(){
     	try {
+
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS POST("
 					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -97,47 +97,56 @@ public class DB_Connector {
 					+ "isDraft INTEGER,"
 					+ "views INTEGER);");
 			System.out.println("enterd post table");
+
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Post"); 
             e.printStackTrace(); 
+
 		}
     	
     }
     public void createTableComment(){
     	try {
+
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS COMMENT("
-					+ "id INT PRIMARY KEY AUTOINCREMENT,"
-					+ "authorID INT,"
-					+ "postID INT,"
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "authorID INTEGER,"
+					+ "postID INTEGER,"
 					+ "body TEXT,"
 					+ "creationDate NONE);");
 			System.out.println("enterd user comment");
+
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Comment"); 
             e.printStackTrace(); 
+
 		}
     	
     }
     public void createTableCollection(){
     	try {
+
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS COLLECTION("
-					+ "id INT PRIMARY KEY AUTOINCREMENT,"
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "title CHAR,"
 					+ "image CHAR,"
-					+ "views INT,"
-					+ "posts INT);");
+					+ "views INTEGER,"
+					+ "posts INTEGER);");
 			System.out.println("enterd collection table");
+
 		} catch (SQLException e) {
             System.err.println("Couldn't create table Collection"); 
             e.printStackTrace(); 
+
 		}
     	
     }
     public ArrayList<User> getUsers(){
     	ArrayList<User> UsersInDB = new ArrayList<User>();
     	try {
+    		initDBConnection();
 			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT * FROM USER;" );
 			
@@ -152,10 +161,12 @@ public class DB_Connector {
 			}
 			rs.close();
 			stmt.close();
+			
 			return UsersInDB;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
@@ -165,6 +176,7 @@ public class DB_Connector {
     	ArrayList<User> UsersInDB = new ArrayList<User>();
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM USER WHERE username=?;");
 			stmt.setString(1, name);
 			ResultSet rs = stmt.executeQuery();
@@ -186,6 +198,7 @@ public class DB_Connector {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
@@ -196,6 +209,7 @@ public class DB_Connector {
     	User user=null;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM USER WHERE id=?;");
 			stmt.setInt(1, ID);
 			ResultSet rs = stmt.executeQuery();
@@ -214,15 +228,18 @@ public class DB_Connector {
 			rs.close();
 			
 			if(counter == 1){
+				
 				return user;
 			}
 			else{
 				if(counter<1){
 					System.err.println("No User was found using this ID!");
+					
 					return null;
 				}
 				else{
 					System.err.println("Multiple Users found by ID! DB failure!");
+					
 					return null;
 				}
 				
@@ -230,6 +247,7 @@ public class DB_Connector {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
         
@@ -237,6 +255,7 @@ public class DB_Connector {
     }
     public boolean createUser(User user){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("INSERT INTO USER (username,password,email)"
 					+ "VALUES (?,?,?)");
 			stmt.setString(1, user.getUsername());
@@ -244,11 +263,13 @@ public class DB_Connector {
 			stmt.setString(3, user.getEmail());
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     	
@@ -257,20 +278,23 @@ public class DB_Connector {
     public boolean changeUser(User user){
     	
     	try {
-			PreparedStatement stmt = connection.prepareStatement(
-					"UPDATE USER SET username = ? WHERE id = ?;"
-					+ "UPDATE USER SET email=? WHERE id=?");
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("UPDATE USER SET username = ? WHERE id = ?;");
 			stmt.setString(1, user.getUsername());
 			stmt.setInt(2, user.getID());
-			stmt.setString(3, user.getEmail());
-			stmt.setInt(4, user.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE USER SET email=? WHERE id=?");
+			stmt.setString(1, user.getEmail());
+			stmt.setInt(2, user.getID());
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     	
@@ -283,6 +307,7 @@ public class DB_Connector {
     public ArrayList<Post> getPosts(){
     	ArrayList<Post> PostsInDB = new ArrayList<Post>();
     	try {
+    		initDBConnection();
 			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT * FROM POST;" );
 			
@@ -305,10 +330,12 @@ public class DB_Connector {
 
 			rs.close();
 			stmt.close();
+			
 			return PostsInDB;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
@@ -318,13 +345,14 @@ public class DB_Connector {
     	ArrayList<Post> PostsInDB = new ArrayList<Post>();
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM POST WHERE collectionID=?;");
 			stmt.setInt(1, collID);
 			ResultSet rs = stmt.executeQuery();
 			
-			
+	
 			while ( rs.next() ) {
-
+				
 				int id = rs.getInt("id");
 				String title  = rs.getString("title");
 				int authID = rs.getInt("authorID");
@@ -346,6 +374,7 @@ public class DB_Connector {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
@@ -354,6 +383,7 @@ public class DB_Connector {
     	ArrayList<Post> PostsInDB = new ArrayList<Post>();
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM POST WHERE authorID=?;");
 			stmt.setInt(1, userID);
 			ResultSet rs = stmt.executeQuery();
@@ -382,6 +412,7 @@ public class DB_Connector {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
@@ -391,6 +422,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM POST WHERE id=?;");
 			stmt.setInt(1, ID);
 			ResultSet rs = stmt.executeQuery();
@@ -416,15 +448,18 @@ public class DB_Connector {
 			stmt.close();
 			
 			if(counter == 1){
+				
 				return post;
 			}
 			else{
 				if(counter<1){
 					System.err.println("No Post found using this ID!");
+					
 					return null;
 				}
 				else{
 					System.err.println("Multiple Posts found by ID! DB failure!");
+					
 					return null;
 				}
 
@@ -433,12 +468,14 @@ public class DB_Connector {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		return null;
 		}
     	
     }
     public boolean createPost(Post post){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("INSERT INTO POST (title,authorID,subtitle,body,image,creationDate,collectionID,isDraft,views)"
 					+ "VALUES (?,?,?,?,?,?,?,?,?)");
 			stmt.setString(1, post.getTitle());
@@ -452,36 +489,52 @@ public class DB_Connector {
 			stmt.setInt(9, post.getViews());
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     }
     public boolean changePost(Post post){
     	try {
-			PreparedStatement stmt = connection.prepareStatement(
-					"UPDATE USER SET title = ? WHERE id = ?;"
-					+ "UPDATE USER SET subtitle=? WHERE id=?;"
-					+ "UPDATE USER SET body=? WHERE id=?;"
-					+ "UPDATE USER SET image=? WHERE id=?;"
-					+ "UPDATE USER SET collectionID=? WHERE id=?"
-					+ "UPDATE USER SET isDraft=? WHERE id=?");
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("UPDATE POST SET title = ? WHERE id = ?;");
 			stmt.setString(1, post.getTitle());
-			stmt.setString(2, post.getSubtitle());
-			stmt.setString(3, post.getBody());
-			stmt.setString(4, post.getImage());
-			stmt.setInt(5, post.getCollectionID());
-			stmt.setInt(6, post.getIsDraft());
+			stmt.setInt(2, post.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE POST SET subtitle=? WHERE id=?;");
+			stmt.setString(1, post.getSubtitle());
+			stmt.setInt(2, post.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE POST SET body=? WHERE id=?;");
+			stmt.setString(1, post.getBody());
+			stmt.setInt(2, post.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE POST SET image=? WHERE id=?;");
+			stmt.setString(1, post.getImage());
+			stmt.setInt(2, post.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE POST SET collectionID=? WHERE id=?");
+			stmt.setInt(1, post.getCollectionID());
+			stmt.setInt(2, post.getID());
+			stmt.execute();
+			stmt = connection.prepareStatement("UPDATE POST SET isDraft=? WHERE id=?");
+			stmt.setInt(1, post.getIsDraft());
+			stmt.setInt(2, post.getID());
+		
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     	
@@ -491,6 +544,7 @@ public class DB_Connector {
     	ArrayList<Comment> CommentsInDB = new ArrayList<Comment>();
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM COMMENT WHERE postID=?;");
 			stmt.setInt(1, post_ID);
 			ResultSet rs = stmt.executeQuery();
@@ -501,7 +555,7 @@ public class DB_Connector {
 				int authID = rs.getInt("authorID");
 				int postID = rs.getInt("postID");        	
 				String body = rs.getString("body");
-				Date creationDate = rs.getDate("creationDate");
+				String creationDate = rs.getString("creationDate");
 				Comment comment = new Comment(id, authID, postID, body, creationDate);
 				CommentsInDB.add(comment);
 				
@@ -509,29 +563,35 @@ public class DB_Connector {
 
 			rs.close();
 			stmt.close();
+			
 			return CommentsInDB;
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	
     }
     public boolean createComment(Comment comment){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COMMENT (authorID,postID,body,creationDate)"
 					+ "VALUES (?,?,?,?)");
 			stmt.setInt(1, comment.getAuthorID());
 			stmt.setInt(2, comment.getPostID());
 			stmt.setString(3, comment.getBody());
-			stmt.setDate(4, comment.getCreationDate());
+			stmt.setString(4, comment.getCreationDate());
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     	
@@ -539,6 +599,7 @@ public class DB_Connector {
     public ArrayList<Collection> getCollections(){
     	ArrayList<Collection> CollectionsInDB = new ArrayList<Collection>();
     	try {
+
 			Statement stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery( "SELECT * FROM COLLECTION;" );
 			
@@ -555,10 +616,12 @@ public class DB_Connector {
 			}
 			rs.close();
 			stmt.close();
+
 			return CollectionsInDB;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
 			return null;
 		}
     	
@@ -566,9 +629,8 @@ public class DB_Connector {
     public ArrayList<Collection> getCollectionsByName(String name){
     	ArrayList<Collection> CollectionsInDB = new ArrayList<Collection>();
     	PreparedStatement stmt;
-    	System.out.println(name);
-    	System.out.println(CollectionsInDB);
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT * FROM COLLECTION WHERE title=?;");
 			stmt.setString(1, name);
 			ResultSet rs = stmt.executeQuery();
@@ -586,59 +648,121 @@ public class DB_Connector {
 	        }
 	        rs.close();
 	        stmt.close();
-	        System.out.println(CollectionsInDB);
+			
 	        return CollectionsInDB;
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return null;
 		}
     	 	
     }
-    /*
-     * what for do we need this ?
-     * public Collection getSingleCollection(int ID){
-    	
-    }*/
+
+
+    public Collection getSingleCollection(int ID){
+    	int counter =0; 
+    	Collection collection=null;
+    	PreparedStatement stmt;
+    	try {
+			stmt= connection.prepareStatement( "SELECT * FROM COLLECTION WHERE id=?;");
+			stmt.setInt(1, ID);
+			ResultSet rs = stmt.executeQuery();
+			     
+			while ( rs.next() ) {
+				
+			
+				int id = rs.getInt("id");
+	        	String title  = rs.getString("title");
+	        	String image = rs.getString("image");
+	        	int views = rs.getInt("views");
+	        	int posts = rs.getInt("posts");
+	        	collection = new Collection(id, title, image, views, posts);
+				counter=counter+1;
+			}	
+			        
+			stmt.close();
+			rs.close();
+			
+			if(counter == 1){
+				
+				return collection;
+			}
+			else{
+				if(counter<1){
+					System.err.println("No Collection was found using this ID!");
+					
+					return null;
+				}
+				else{
+					System.err.println("Multiple Collections found by ID! DB failure!");
+					
+					return null;
+				}
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return null;
+		}
+    }
     public boolean createCollection(Collection collection){
     	try {
-			PreparedStatement stmt = connection.prepareStatement("INSERT INTO COLLECTION (title,image,views,posts) "
+
+    		PreparedStatement stmt = connection.prepareStatement("INSERT INTO COLLECTION (title,image,views,posts) "
 					+ "VALUES (?,?,?,?)");
+			System.out.println("vor setzen der varaiblen");
 			stmt.setString(1, collection.getTitle());
 			stmt.setString(2, collection.getImage());
 			stmt.setInt(3, collection.getViews());
 			stmt.setInt(4, collection.getPosts());
+			System.out.println("nach setzen der varaiblen");
 			stmt.execute();
 			stmt.close();
+			System.out.println("stmt ende");
 			System.out.println("collection created title"+collection.getTitle()+" Image"+collection.getImage()+" Views:"+collection.getViews()+" Posts:"+collection.getPosts());
+
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
 			return false;
 		}
     	
     }
     public boolean changeCollection(Collection collection){
     	try {
-			PreparedStatement stmt = connection.prepareStatement(
-					"UPDATE COLLECTION SET title = ? WHERE id = ?;"
-					+ "UPDATE COLLECTION SET image=? WHERE id=?;"
-					+ "UPDATE COLLECTION SET views=? WHERE id=?;"
-					+ "UPDATE COLLECTION SET posts=? WHERE id=?;");
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("UPDATE COLLECTION SET title = ? WHERE id=?;");
 			stmt.setString(1, collection.getTitle());
-			stmt.setString(2, collection.getImage());
-			stmt.setInt(3, collection.getViews());
-			stmt.setInt(4, collection.getPosts());
+			stmt.setInt(2,collection.getID());
 			stmt.execute();
+			stmt=connection.prepareStatement("UPDATE COLLECTION SET image=? WHERE id=?;");
+			stmt.setString(1, collection.getImage());
+			stmt.setInt(2,collection.getID());
+			stmt.execute();
+			stmt=connection.prepareStatement("UPDATE COLLECTION SET views=? WHERE id=?;");
+			stmt.setInt(1, collection.getViews());
+			stmt.setInt(2,collection.getID());
+			stmt.execute();
+			stmt=connection.prepareStatement("UPDATE COLLECTION SET posts=? WHERE id=?;");
+			stmt.setInt(1, collection.getPosts());
+			stmt.setInt(2,collection.getID());
+			stmt.execute();			
+			
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     }
@@ -647,6 +771,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT views FROM COLLECTION WHERE id=?;");
 			stmt.setInt(1, collID);
 			ResultSet rs = stmt.executeQuery();
@@ -665,23 +790,27 @@ public class DB_Connector {
 	    					"UPDATE COLLECTION SET views = ? WHERE id = ?;");
 	        		stmt1.setInt(1, views+1);
 	        		stmt1.close();
+	    			
 	        		return true;
 	        		
 	        	}
 	        	catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
+	        			
 	        			return false;
 	        	}
 	        }
 	        else{
 	        	System.err.println("Couldn't handle DB-Query");
+				
 	        	return false;
 	        }
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		} 	
     }
@@ -691,6 +820,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT views FROM COLLECTION WHERE id=?;");
 			stmt.setInt(1, collID);
 			ResultSet rs = stmt.executeQuery();
@@ -709,23 +839,27 @@ public class DB_Connector {
 	    					"UPDATE COLLECTION SET views = ? WHERE id = ?;");
 	        		stmt1.setInt(1, views-1);
 	        		stmt1.close();
+	    			
 	        		return true;
 	        		
 	        	}
 	        	catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
+	        			
 	        			return false;
 	        	}
 	        }
 	        else{
 	        	System.err.println("Couldn't handle DB-Query");
+				
 	        	return false;
 	        }
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     }
@@ -734,6 +868,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT posts FROM COLLECTION WHERE id=?;");
 			stmt.setInt(1, collID);
 			ResultSet rs = stmt.executeQuery();
@@ -752,23 +887,27 @@ public class DB_Connector {
 	    					"UPDATE COLLECTION SET posts = ? WHERE id = ?;");
 	        		stmt1.setInt(1, posts+1);
 	        		stmt1.close();
+	    			
 	        		return true;
 	        		
 	        	}
 	        	catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
+	        			
 	        			return false;
 	        	}
 	        }
 	        else{
 	        	System.err.println("Couldn't handle DB-Query");
+				
 	        	return false;
 	        }
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}	
     }
@@ -777,6 +916,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT posts FROM COLLECTION WHERE id=?;");
 			stmt.setInt(1, collID);
 			ResultSet rs = stmt.executeQuery();
@@ -795,23 +935,27 @@ public class DB_Connector {
 	    					"UPDATE COLLECTION SET posts = ? WHERE id = ?;");
 	        		stmt1.setInt(1, posts-1);
 	        		stmt1.close();
+	    			
 	        		return true;
 	        		
 	        	}
 	        	catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
+	        			
 	        			return false;
 	        	}
 	        }
 	        else{
 	        	System.err.println("Couldn't handle DB-Query");
+				
 	        	return false;
 	        }
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		}
     }
@@ -820,6 +964,7 @@ public class DB_Connector {
     	int counter=0;
     	PreparedStatement stmt;
     	try {
+    		initDBConnection();
 			stmt= connection.prepareStatement( "SELECT views FROM POST WHERE id=?;");
 			stmt.setInt(1, postID);
 			ResultSet rs = stmt.executeQuery();
@@ -838,33 +983,39 @@ public class DB_Connector {
 	    					"UPDATE POST SET views = ? WHERE id = ?;");
 	        		stmt1.setInt(1, views+1);
 	        		stmt1.close();
+	    			
 	        		return true;
 	        		
 	        	}
 	        	catch (SQLException e) {
 	        			// TODO Auto-generated catch block
 	        			e.printStackTrace();
+	        			
 	        			return false;
 	        	}
 	        }
 	        else{
 	        	System.err.println("Couldn't handle DB-Query");
+				
 	        	return false;
 	        }
 	        
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			return false;
 		} 	
     	
     }
     public boolean deletePost(int postID){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM POST WHERE id=?");
 			stmt.setInt(1, postID);
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
@@ -877,10 +1028,12 @@ public class DB_Connector {
     }
     public boolean deleteComment(int commentID){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM COMMENT WHERE id=?");
 			stmt.setInt(1, commentID);
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
@@ -892,10 +1045,12 @@ public class DB_Connector {
     }
     public boolean deleteUser(int userID){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM USER WHERE id=?");
 			stmt.setInt(1, userID);
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
@@ -907,10 +1062,12 @@ public class DB_Connector {
     }
     public boolean deleteCollection(int collID){
     	try {
+    		initDBConnection();
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM COLLECTION WHERE id=?");
 			stmt.setInt(1, collID);
 			stmt.execute();
 			stmt.close();
+			
 			return true;
 			
 		} catch (SQLException e) {
