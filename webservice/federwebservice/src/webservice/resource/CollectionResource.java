@@ -50,6 +50,7 @@ public class CollectionResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void createCollection(Collection collection){
 		dbcon.initDBConnection();
+		System.out.println(collection.toString());
 		dbcon.createCollection(collection);
 		dbcon.closeDBConnection();
 	}
