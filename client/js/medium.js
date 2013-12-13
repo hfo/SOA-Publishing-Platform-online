@@ -33,7 +33,7 @@
             modifier: 'auto',
             placeholder: "",
             autofocus: false,
-            autoHR: true,
+            autoHR: false,
             mode: 'rich', // inline, partial, rich
             maxLength: -1,
             modifiers: {
@@ -44,7 +44,7 @@
             },
             tags: {
                 paragraph: 'p',
-                outerLevel: ['pre','blockquote', 'figure', 'hr'],
+                outerLevel: ['pre','blockquote', 'figure'],
                 innerLevel: ['a', 'b', 'u', 'i', 'img', 'strong'] // Todo: Convert strong to b (IE)
             },
             cssClasses: {
@@ -227,7 +227,7 @@
                             node.innerText = val;
                         }
                     }
-                    return (node.textContent || node.innerText).trim();
+                    return (node.textContent || node.innerText || "").trim();
                 },
                 changeTag: function(oldNode, newTag) {
                     var newNode = d.createElement(newTag),
@@ -354,7 +354,7 @@
             /*
              * This is a Paste Hook. When the user pastes
              * content, this ultimately converts it into
-             * plain text nefore inserting the data.
+             * plain text before inserting the data.
              */
             pasteHook: function(fn){
                 var input = d.createElement('textarea');
@@ -410,7 +410,7 @@
                 }
                 
                 if( e.which === 13 ){
-                    intercept.enterKey.call(null, e);
+                    //intercept.enterKey.call(null, e);
                 }
             },
             up: function(e){
@@ -474,7 +474,7 @@
                         if( makeHR ){
                             utils.preventDefaultEvent(e);
                             utils.html.deleteNode( lastChild );
-                            utils.html.addTag('hr', false, false, focusedElement);
+                            //utils.html.addTag('hr', false, false, focusedElement);
                             focusedElement = focusedElement.nextSibling;
                         }
                         utils.html.addTag(settings.tags.paragraph, true, null, focusedElement);

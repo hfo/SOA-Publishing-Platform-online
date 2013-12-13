@@ -2,27 +2,46 @@
 $(function() {
 	"use strict";
 
+	var debug = true;
+
+	// some "advanced" log output
 	var logger = function(output, type) {
-		var date = new Date();
-		var h = date.getHours();
-		var m = date.getMinutes();
-		var s = date.getSeconds();
+		if (debug) {
+			var date = new Date();
+			var h = date.getHours();
+			var m = date.getMinutes();
+			var s = date.getSeconds();
 
-		if (h < 10)	h = '0'+h;
-		if (m < 10)	m = '0'+m;
-		if (s < 10)	s = '0'+s;
+			if (h < 10)	h = '0'+h;
+			if (m < 10)	m = '0'+m;
+			if (s < 10)	s = '0'+s;
 
-		if (type === '' || type === 'log') console.log(h+':'+m+':'+s+' '+output);
-		else if (type === 'info') console.info(h+':'+m+':'+s+' '+output);
-		else if (type === 'error') console.error(h+':'+m+':'+s+' '+output);
+			if (type === '' || type === 'log') console.log(h+':'+m+':'+s+' '+output);
+			else if (type === 'info') console.info(h+':'+m+':'+s+' '+output);
+			else if (type === 'error') console.error(h+':'+m+':'+s+' '+output);
+		}
 	}
+
+	// when an ajax request starts, show spinner animation
+    $(this).ajaxStart(function(){
+        $('.loading-overlay').fadeIn(150);
+    });
+
+    // when an ajax request completes, hide spinner animation  
+    $(this).ajaxStop(function(){
+        $('.loading-overlay').fadeOut(700);
+    });
 
 	// module pattern, app namespace
 	var feder = (function() {
 
-		var _urlRoot = 'http://localhost:8080';
+		var _this; // blame javascript scopes
 
-		var testCollections = [{"id":0,"title":"Technology","image":"","views":100,"posts":18},{"id":1,"title":"Science","image":"","views":24,"posts":18},{"id":2,"title":"Food","image":"","views":123,"posts":18},{"id":3,"title":"Sports","image":"","views":0,"posts":18},{"id":4,"title":"Comedy","image":"","views":0,"posts":18}];
+		// webservice root (no trailing /)
+		var _urlRoot = 'http://localhost:8080/federwebservice/rest';
+
+		// current post and user references
+		var currentUser, currentPost;
 
 		/*
 		 * User Model
@@ -31,11 +50,12 @@ $(function() {
 		var User = Backbone.Model.extend({
 			urlRoot: _urlRoot+'/users',
 			defaults: {
+				id: 0,
 				username: '',
 				email: ''
 			},
 			initialize: function() {
-				logger('[User Instance Created] '+JSON.stringify(this.toJSON()), 'info');
+				// logger('[User Instance Created] '+JSON.stringify(this.toJSON()), 'info');
 			}
 		});
 
@@ -53,11 +73,11 @@ $(function() {
 	            image: '',
 	            creationDate: '',
 	            collectionId: -1,
-	            isDraft: true,
+	            isDraft: 1,
 	            views: 0
 	        },
 	        initialize: function() {
-	        	logger('[Post Instance Created] '+JSON.stringify(this.toJSON()), 'info');
+	        	// logger('[Post Instance Created] '+JSON.stringify(this.toJSON()), 'info');
 	        }
 	    });
 
@@ -74,7 +94,7 @@ $(function() {
 	            creationDate: ''
 	        },
 	        initialize: function() {
-	        	logger('[Comment Instance Created] '+JSON.stringify(this.toJSON()), 'info');
+	        	// logger('[Comment Instance Created] '+JSON.stringify(this.toJSON()), 'info');
 	        }
 	    });
 
@@ -91,17 +111,88 @@ $(function() {
 	    		views: 0
 	    	},
 	    	initialize: function() {
-	    		logger('[Collection Instance Created] '+JSON.stringify(this.toJSON()), 'info');
+	    		// logger('[Collection Instance Created] '+JSON.stringify(this.toJSON()), 'info');
 	    	}
 	    });
 
 	    /*
 		 * Collection Collection ;P
-		 * collection of post collections from the server
+		 * list of post collections from the server
 		 */
 	    var Collections = Backbone.Collection.extend({
 			model: Collection,
 			url: _urlRoot+'/collections'
+		});
+
+		/*
+		 * Post Collection
+		 * backbone collection of the current user's posts
+		 */
+	    var UserPosts = Backbone.Collection.extend({
+			model: Post,
+			url: _urlRoot+'/users/1/posts'	// TODO: set real user id
+		});
+
+		/*
+		 * SidebarView
+		 * the view for our sidebar
+		 */
+		var SidebarView = Backbone.View.extend({
+			el: $('.sidebar'),
+			initialize: function() {
+
+			},
+			loadViewState: function(state) {
+				switch(state) {
+					case 'homepage':
+						var markup = $('#homepage-sidebar').clone();
+						$('.sidebar').empty().append(markup);
+						break;
+					case 'post':
+						var markup = $('#post-details-sidebar').clone();
+						$('.sidebar').empty().append(markup);
+						break;
+					case 'post-editing':
+						var markup = $('#post-editing-sidebar').clone();
+						$('.sidebar').empty().append(markup);
+						break;
+				}
+			}
+		});
+
+		/*
+		 * ContentView
+		 * the view for our sidebar
+		 */
+		var ContentView = Backbone.View.extend({
+			el: $('.content'),
+			initialize: function() {
+
+			},
+			loadViewState: function(state) {
+				switch(state) {
+					case 'homepage':
+						var markup = $('#homepage-content').clone();
+						$('.content').empty().append(markup);
+						break;
+					case 'login':
+						var markup = $('#login-content').clone();
+						$('.content').empty().append(markup);
+						break;
+					case 'manage':
+						var markup = $('#manage-posts-content').clone();
+						$('.content').empty().append(markup);
+						break;
+					case 'post':
+						var markup = $('#post-content').clone();
+						$('.content').empty().append(markup);
+						break;
+					case 'post-editing':
+						var markup = $('#post-editing-content').clone();
+						$('.content').empty().append(markup);
+						break;
+				}
+			}
 		});
 
 		/*
@@ -111,65 +202,52 @@ $(function() {
 		var AppView = Backbone.View.extend({
 			el: $('body'),
 			events: {
-				'click .home-link':			'showHomeView',
-				'click .collections-link':	'showCollectionView',
-				'click .collection':		'showCollectionDetailView',
-				'click .post':				'showEditorView'	// TODO: for test purposes, change to showPostView later
+				'click .home-button': 			'showHomeView',
+				'click .new-post-button':		'showEditorView',
+				'click .manage-posts-button':	'showManageView',
+				'click .save-post':				'saveCurrentPost'
 			},
 			initialize: function() {
 				logger('Feder App started.', 'info');
 
-				// sample model instantiation
-				this.user = new User({ id: 0, username: 'Philipp' });
-				this.post = new Post({ id: 0, title: 'Sample Post', subtitle: 'Blubb', body: 'Lorem ipsum...' });
-				// var sampleComment = new Comment({ id: 0 });
+				_this = this; // global reference to this. again, blame javascript scopes
 
-				// collection of post collections instance
-				this.collections = new Collections(testCollections);
-				// collections.fetch();
+				// event delegation (dynamic binding)
+				this.delegateEvents({ 
+					'click .home-button': 			'showHomeView',
+					'click .new-post-button':		'showEditorView',
+					'click .manage-posts-button':	'showManageView',
+					'click .save-post':				'saveCurrentPost'
+				});
 
-				// sort collections by views (descending)
+				// load start views
+				this.sidebarView = new SidebarView();
+				this.sidebarView.loadViewState('homepage');
+
+				this.contentView = new ContentView();
+				this.contentView.loadViewState('homepage');
+
+				// sample user instantiation (signed in user)
+				this.currentUser = new User({ id: 1, username: 'Philipp' });
+
+				// user's own post collection
+				this.userPosts = new UserPosts();
+
+				// instantiate and fetch list of post collections from server
+				this.collections = new Collections();
+				this.collections.fetch();
+
+				// sort collections list by views (descending)
 				this.collections.models = _.sortBy(this.collections.models, function(o) { return o.get('views'); });
 				this.collections.models.reverse();
 
-				grande.bind(document.querySelectorAll("article"));
+				// set up medium.js plugin
+				this.setupMedium();
 
-				// set up medium.js for editor view
-				new Medium({
-	                element: document.getElementById('article-title'),
-	                debug: true,
-				    modifier: 'auto',
-				    placeholder: "Your Title",
-				    autofocus: true,
-				    mode: 'inline',
-	            });
+				// set up grande toolbar plugin
+				grande.bind(document.getElementById('post-body'));
 
-	            new Medium({
-	                element: document.getElementById('article-subtitle'),
-	                debug: true,
-				    modifier: 'auto',
-				    placeholder: "Optional Subtitle",
-				    autofocus: false,
-				    mode: 'inline',
-	            });
-
-				new Medium({
-	                element: document.getElementById('article-body'),
-	                debug: true,
-				    modifier: 'auto',
-				    placeholder: "Start writing here...",
-				    autofocus: false,
-				    autoHR: true,
-				    mode: 'rich',
-				    modifiers: {
-				        66: 'bold',
-				        73: 'italicize',
-				        85: 'underline',
-				        86: 'paste'
-				    }
-	            });
-
-				// jquery modal plugin init
+				// set up modal plugin
 	            $('.modal-link').click(function(event) {
 					event.preventDefault();
 					$(this).modal({
@@ -180,58 +258,135 @@ $(function() {
 			showHomeView: function() {
 				logger('[View Changed] Home View', 'info');
 
-				// TODO: display recent and popular posts
-
-				$('.editor-view').fadeOut(500);
-				$('.reading-view').fadeIn(500);
-				$('.home-view').fadeIn(500);
-				$('.collections-view').fadeOut(500);
+				this.contentView.loadViewState('homepage');
+				this.sidebarView.loadViewState('homepage');
 			},
 			showCollectionView: function() {
 				logger('[View Changed] Collection View', 'info');
-
-				$('.collections').empty();
-
-				// create markup for collection list
-				_.each(this.collections.models, function(value, key, list) {
-					$('.collections').append('<a class="collection" href="#">'+value.get('title')+' <span>'+value.get('posts')+' Posts</span></a>')	
-				}, this);
-
-				$('.editor-view').fadeOut(500);
-				$('.reading-view').fadeIn(500);
-				$('.home-view').fadeOut(500);
-				$('.collections-view').fadeIn(500);
 			},
 			showCollectionDetailView: function() {
 				logger('[View Changed] Collection Detail View', 'info');
-
-				// TODO: show recent and popular posts of selected collection
-
-				$('.editor-view').fadeOut(500);
-				$('.reading-view').fadeIn(500);
-				$('.home-view').fadeIn(500);
-				$('.collections-view').fadeOut(500);
 			},
-			showEditorView: function() {
+			showEditorView: function(event, post) {
 				logger('[View Changed] Editor View', 'info');
 
-				// TODO: fetch real post data and set post variable
+				// editing existing post? -> fill form fields with post data...
+				if (post) {
+					$('.post-body').empty().append(post.get('body'));
+					$('.post-title').empty().append('<p>'+post.get('title')+'</p>');
+					$('.post-subtitle').empty().append(post.get('subtitle'));
+					this.currentPost = post;
 
-				// fill editor form with post data
-				$('.article-title').text(this.post.get('title'));
-				$('.article-subtitle').text(this.post.get('subtitle'));
-				$('.article-body').text(this.post.get('body'));
+				// ...else start with an empty post
+				} else {
+					$('.post-body, .post-title, .post-subtitle').empty();
+				}
 
-				$('.reading-view').fadeOut(500);
-				$('.editor-view').fadeIn(500);
+				this.sidebarView.loadViewState('post-editing');
+				this.contentView.loadViewState('post-editing');
+				this.setupMedium();
+			},
+			showManageView: function() {
+				logger('[View Changed] Manage View', 'info');
+
+				// fetch all posts from user
+				this.userPosts.fetch({
+					success: function(collection, response, options) {
+						// empty previous post list
+						$('.post-list').empty();
+
+						// generate markup
+						_.each(collection.models, function(value, key, list) {
+							value.set({ id: value.get('ID') }); // TODO: workaround, change ID to id on server-side
+
+							var postMarkup = '	<li class="manage-post-item" data-id="'+value.get('ID')+'">\
+													<h1>'+value.get('title')+'</h1>\
+													<h2>'+value.get('subtitle').substr(0, 75)+'...</h2>\
+													<a href="#" class="edit-button"><i class="icon-uniE640"></i></a>\
+												</li>';
+							$('.post-list').append(postMarkup);
+						});
+
+						// show editing view when post is clicked by user
+						$('.manage-post-item').click(function() {
+							_.each(_this.userPosts.models, function(value, key, list) {
+								if (value.get('ID') == $(this).data('id')) {
+									_this.showEditorView(null, value);
+								}
+							}, this);
+						});
+
+						logger('[User Posts Collection Fetch] Fetched all posts from current user.', 'info');
+					},
+					error: function(collection, response, options) {
+						logger('[User Posts Collection Fetch] Oh oh! Could not fetch user posts. Most likely a server issue. Response: '+response, 'error');
+					}
+				});
+
+				this.sidebarView.loadViewState('homepage');
+				this.contentView.loadViewState('manage');
 			},
 			showPostView: function() {
 				logger('[View Changed] Post View', 'info');
+				this.sidebarView.loadViewState('post');
+				this.contentView.loadViewState('post');
+			},
+			setupMedium: function() {
+				// set up medium.js for editor view
+				new Medium({
+	                element: document.getElementById('post-title'),
+	                debug: debug,
+				    modifier: 'auto',
+				    placeholder: "Your Title...",
+				    autofocus: true,
+				    mode: 'inline',
+	            });
 
-				// TODO: show selected post
+	            new Medium({
+	                element: document.getElementById('post-subtitle'),
+	                debug: debug,
+				    modifier: 'auto',
+				    placeholder: "Your longer subtitle or preface...",
+				    autofocus: false,
+				    mode: 'inline',
+	            });
 
-				$('.reading-view').fadeIn(500);
-				$('.editor-view').fadeOut(500);
+				new Medium({
+	                element: document.getElementById('post-body'),
+	                debug: debug,
+				    modifier: 'auto',
+				    placeholder: "Start writing here...",
+				    autofocus: false,
+				    autoHR: false,
+				    mode: 'rich',
+				    modifiers: {
+				        66: 'bold',
+				        73: 'italicize',
+				        85: 'underline',
+				        86: 'paste'
+				    },
+				    tags: {
+				        paragraph: 'p',
+				        outerLevel: ['blockquote', 'figure', 'h1', 'h2'],
+				        innerLevel: ['a', 'b', 'u', 'i', 'img', 'strong']
+				    }
+	            });
+			},
+			saveCurrentPost: function() {
+				// create a new post?
+				if (!this.currentPost) {
+					this.currentPost = new Post({ authorId: this.currentUser.get('id') });
+				}
+
+				// update post with form data from editor view
+				this.currentPost.set({
+					title: 		$('#post-title').text(),
+					subtitle: 	$('#post-subtitle').text(),
+					body: 		$('#post-body').html()
+				});
+
+				// push updated post to server
+				this.currentPost.save();
 			}
 		});
 

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Feder &ndash; A Online Publishing Platform</title>
+
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic,700italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/jquery.modal.css" />
+    <link rel="stylesheet" href="css/medium.css" />
+    <link rel="stylesheet" href="css/menu.css" />
+    <link rel="stylesheet" href="css/tipper.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <div class="container">
+    	<section class="sidebar one-third">
+    		
+    	</section>
+
+    	<section class="content two-third">
+			
+    	</section>
+    </div>
+
+    <div class="loading-overlay"><i class="spinner icon-spinner"></i></div>
+
+
+
+    <div class="view-states" style="display: none;">
+    	<!-- View State - Sidebar: Homepage -->
+	    <section id="homepage-sidebar" class="homepage-sidebar meta-data">
+			<a href="#" class="home-button"><i class="icon-quill"></i> Feder &mdash; A Online Publishing Platform</a>
+
+			<nav>
+				<ul class="home-navigation">
+					<li><h2>Start Writing</h2></li>
+					<li><a href="#" class="new-post-button"><i class="icon-add"></i> Create A New Post</a></li>
+					<li><a href="#" class="manage-posts-button"><i class="icon-menu"></i> Manage Your Posts</a></li>
+					<li><h2>Discover Great Posts</h2></li>
+					<li><a href="#" class="browse-collections-button"><i class="icon-book"></i> Browse Collections</a></li>
+					<li><a href="#" class="recent-posts-button"><i class="icon-clock"></i> Recent Posts</a></li>
+					<li><a href="#" class="popular-posts-button"><i class="icon-trophy"></i> Popular Posts</a></li>
+				</ul>
+			</nav>
+
+			<aside class="user-data">
+				<div class="profile">
+					<img class="avatar" src="img/avatar.png" alt="Avatar" />
+					<span>Max Mustermann <a href="#"><i class="icon-cog"></i></a> <a href="#"><i class="icon-question"></i></a></span>
+				</div>
+			</aside>
+		</section>
+
+    	<!-- View State - Sidebar: Post Details -->
+	    <section id="post-details-sidebar" class="post-details meta-data">
+			<a href="#" class="home-button"><i class="icon-home"></i> Back to Homepage</a>
+
+			<h1 class="post-title">Headline</h1>
+			<aside class="author-name">by Philipp Siekmann</aside>
+
+			<aside class="social">
+				<a href="#"><i class="icon-facebook"></i></a>
+				<a href="#"><i class="icon-twitter"></i></a>
+				<a href="#"><i class="icon-googleplus"></i></a>
+			</aside>
+
+			<h2 class="post-subtitle">
+				Subtitle
+			</h2>
+
+			<aside class="user-data">
+				<div class="profile">
+					<img class="avatar" src="img/avatar.png" alt="Avatar" />
+					<span>Max Mustermann <a href="#"><i class="icon-cog"></i></a> <a href="#"><i class="icon-question"></i></a></span>
+				</div>
+			</aside>
+		</section>
+
+		<!-- View State - Sidebar: Editing Post Details -->
+	    <section id="post-editing-sidebar" class="post-details meta-data">
+			<a href="#" class="home-button"><i class="icon-home"></i> Back to Homepage</a>
+
+			<h1 class="post-title" id="post-title"></h1>
+			<aside class="author-name">by Max Mustermann</aside>
+
+			<aside class="social">
+				<a href="#"><i class="icon-facebook"></i></a>
+				<a href="#"><i class="icon-twitter"></i></a>
+				<a href="#"><i class="icon-googleplus"></i></a>
+			</aside>
+
+			<h2 class="post-subtitle" id="post-subtitle">
+
+			</h2>
+
+			<aside class="tools">
+				<a href="#" class="post-editing delete-post tipper" title="Delete Post"><i class="icon-trash-alt"></i></a>
+				<a href="#" class="post-editing save-post tipper" title="Save Post"><i class="icon-disk"></i></a>
+				<a href="#" class="post-editing publish-post tipper" title="Publish Post"><i class="icon-checkmark"></i></a>
+			</aside>
+
+			<aside class="user-data">
+				<div class="profile">
+					<img class="avatar" src="img/avatar.png" alt="Avatar" />
+					<span>Max Mustermann <a href="#"><i class="icon-cog"></i></a> <a href="#"><i class="icon-question"></i></a></span>
+				</div>
+			</aside>
+		</section>
+
+		<!-- View State - Content: Homepage -->
+		<section id="homepage-content" class="homepage cover-image">
+			<ul class="feature-list">
+				<li><i class="icon-quill"></i> <span>Writing</span></li>
+				<li><i class="icon-book"></i> <span>Reading</span></li>
+				<li><i class="icon-chat"></i> <span>Commenting</span></li>
+			</ul>
+		</section>
+
+		<!-- View State - Content: Manage Posts -->
+		<section id="manage-posts-content" class="manage-posts cover-image">
+			<ul class="post-list">
+				<li>
+					<h1>The Birth of the iPhone</h1>
+					<h2>Excerpt...</h2>
+					<a href="#" class="edit-button"><i class="icon-uniE640"></i></a>
+				</li>
+				<li>
+					<h1>Lillehammer Live</h1>
+					<h2>Abstract...</h2>
+					<a href="#" class="edit-button"><i class="icon-uniE640"></i></a>
+				</li>
+				<li>
+					<h1>Hiring Movers</h1>
+					<h2>Teaser test for the post...</h2>
+					<a href="#" class="edit-button"><i class="icon-uniE640"></i></a>
+				</li>
+			</ul>
+		</section>
+
+		<!-- View State - Content: Login/Signup -->
+		<section id="login-content" class="login cover-image">
+			<section class="login-form">
+				<h1><i class="icon-key"></i> Sign In</h1>
+
+				<form action="#">
+					<input type="text" name="username" placeholder="Username" />
+					<input type="password" name="password" placeholder="Password" />
+					<a href="#" class="signup-button"><i class="icon-checkmark"></i> Sign In</a>
+				</form>
+			</section>
+			<section class="register-form">
+				<h1><i class="icon-add"></i> Create A New Account</h1>
+
+				<form action="#">
+					<input type="text" name="username" placeholder="Username" />
+					<input type="text" name="email" placeholder="E-Mail" />
+					<input type="password" name="password" placeholder="Password" />
+					<a href="#" class="signup-button"><i class="icon-plus"></i> Register Account</a>
+				</form>
+			</section>
+		</section>
+
+		<!-- View State - Content: Post Details -->
+		<section id="post-content" class="post">
+			<article class="post-body">
+				
+			</article>
+		</section>
+
+		<!-- View State - Content: Editing Post Details -->
+		<section id="post-editing-content" class="post">
+			<article id="post-body" class="post-body">
+				
+			</article>
+		</section>
+    </div>
+
+    <!-- Les JavaScript -->
+    <script src="js/jquery-min.js"></script>
+    <script src="js/json2.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/backbone-min.js"></script>
+    <script src="js/jquery.modal-min.js"></script>
+    <script src="js/medium.js"></script>
+    <script src="js/grande.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
