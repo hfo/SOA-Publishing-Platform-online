@@ -125,12 +125,20 @@ $(function() {
 		});
 
 		/*
-		 * Post Collection
+		 * User Post Collection
 		 * backbone collection of the current user's posts
 		 */
 	    var UserPosts = Backbone.Collection.extend({
 			model: Post,
 			url: _urlRoot+'/users/1/posts'	// TODO: set real user id
+		});
+
+		/*
+		 * Collection Post Collection
+		 * backbone collection of the posts of a collection
+		 */
+	    var CollectionPosts = Backbone.Collection.extend({
+			model: Post
 		});
 
 		/*
@@ -179,6 +187,14 @@ $(function() {
 						var markup = $('#login-content').clone();
 						$('.content').empty().append(markup);
 						break;
+					case 'collections':
+						var markup = $('#collections-content').clone();
+						$('.content').empty().append(markup);
+						break;
+					case 'collection-details':
+						var markup = $('#collection-details-content').clone();
+						$('.content').empty().append(markup);
+						break;
 					case 'manage':
 						var markup = $('#manage-posts-content').clone();
 						$('.content').empty().append(markup);
@@ -202,10 +218,11 @@ $(function() {
 		var AppView = Backbone.View.extend({
 			el: $('body'),
 			events: {
-				'click .home-button': 			'showHomeView',
-				'click .new-post-button':		'showEditorView',
-				'click .manage-posts-button':	'showManageView',
-				'click .save-post':				'saveCurrentPost'
+				'click .home-button': 				'showHomeView',
+				'click .new-post-button':			'showEditorView',
+				'click .manage-posts-button':		'showManageView',
+				'click .browse-collections-button':	'showCollectionView',
+				'click .save-post':					'saveCurrentPost'
 			},
 			initialize: function() {
 				logger('Feder App started.', 'info');
@@ -214,10 +231,11 @@ $(function() {
 
 				// event delegation (dynamic binding)
 				this.delegateEvents({ 
-					'click .home-button': 			'showHomeView',
-					'click .new-post-button':		'showEditorView',
-					'click .manage-posts-button':	'showManageView',
-					'click .save-post':				'saveCurrentPost'
+					'click .home-button': 				'showHomeView',
+					'click .new-post-button':			'showEditorView',
+					'click .manage-posts-button':		'showManageView',
+					'click .browse-collections-button':	'showCollectionView',
+					'click .save-post':					'saveCurrentPost'
 				});
 
 				// load start views
@@ -263,9 +281,70 @@ $(function() {
 			},
 			showCollectionView: function() {
 				logger('[View Changed] Collection View', 'info');
+
+				// empty previous collection list
+				$('.collection-list').empty();
+
+				// create markup
+				_.each(this.collections.models, function(value, key, list) {
+					value.set({ id: value.get('ID') }); // TODO: workaround, change ID to id on server-side
+
+					var postMarkup = '	<li class="collection-list-item" data-id="'+value.get('id')+'" style="background-image: url(img/'+value.get('image')+');">\
+											<h1>'+value.get('title')+' <span>&mdash; '+value.get('posts')+' Posts</span></h1>\
+										</li>';
+					$('.collection-list').append(postMarkup);
+				});
+
+				this.sidebarView.loadViewState('homepage');
+				this.contentView.loadViewState('collections');
+
+				// show collection detail view when collection item is clicked by user
+				$('.collection-list-item').bind('click', function(event) {
+					_.each(_this.collections.models, function(value, key, list) {
+						if (value.get('id') == $(this).data('id')) {
+							_this.showCollectionDetailView(null, value);
+						}
+					}, this);
+				});
 			},
-			showCollectionDetailView: function() {
+			showCollectionDetailView: function(event, collection) {
 				logger('[View Changed] Collection Detail View', 'info');
+
+				// empty previous collection posts list
+				$('.collection-post-list').empty();
+
+				// fetch posts of selected collection
+				var collectionPosts = new CollectionPosts();
+				collectionPosts.url = _urlRoot+'/collections/'+collection.get('id')+'/posts';
+				collectionPosts.fetch({
+					success: function(collection, response, options) {
+						// create markup
+						_.each(collectionPosts.models, function(value, key, list) {
+							value.set({ id: value.get('ID') }); // TODO: workaround, change ID to id on server-side
+
+							var author = new User({ id: value.get('authorId') });
+							author.fetch({
+								success: function(model, response, options) {
+									var postMarkup = '	<li class="collection-post-item" data-id="'+value.get('id')+'">\
+															<h1>'+value.get('title')+' <span>&mdash; '+author.get('username')+'</span></h1>\
+														</li>';
+									$('.collection-post-list').append(postMarkup);
+								},
+								error: function(model, response, options) {
+									logger('[Collection Posts Fetch] Oh oh! Could not fetch author information of post with id '+value.get('id')+': '+response, 'error');
+								}
+							});
+						});
+
+						logger('[Collection Posts Fetch] Fetched all posts from selected collection.', 'info');
+					},
+					error: function(collection, response, options) {
+						logger('[Collection Posts Fetch] Oh oh! Could not fetch collection posts. Most likely a server issue. Response: '+response, 'error');
+					}
+				});
+
+				this.contentView.loadViewState('collection-details');
+				this.sidebarView.loadViewState('homepage');
 			},
 			showEditorView: function(event, post) {
 				logger('[View Changed] Editor View', 'info');

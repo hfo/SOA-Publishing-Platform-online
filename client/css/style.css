@@ -272,6 +272,135 @@ input {
 }
 
 /*
+ * Collections List 
+ * ----------------
+ */
+
+ .collections.cover-image {
+	background: url(../img/sample7.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width: 67%;
+	height: 100%;
+	position: fixed;
+	overflow-y: auto;
+}
+
+.collection-list {
+	list-style: none;
+	position: relative;
+	top: 215px;
+	width: 60%;
+	margin: 0 auto;
+	padding-bottom: 60px;
+}
+
+.collection-list li {
+	background: rgba(0, 0, 0, 0.5);
+	background-position: center center;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	display: inline-block;
+	width: 40%;
+	padding: 40px 20px;
+	margin: 0 0 20px 10px;
+	cursor: pointer;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-o-transition: .5s;
+	-ms-transition: .5s;
+	-moz-transition: .5s;
+	-webkit-transition: .5s;
+	transition: .5s;
+}
+
+.collection-list li:hover {
+	padding-left: 30px;
+}
+
+.collection-list li h1 {
+	font-size: 14px;
+	font-weight: 400;
+	color: #f1f1f1;
+	text-transform: uppercase;
+	text-decoration: none;
+	letter-spacing: 1px;
+}
+
+.collection-list li h1 span {
+	font-size: 12px;
+}
+
+/*
+ * Collection Posts 
+ * ----------------
+ */
+
+ .collection-details.cover-image {
+	background: url(../img/sample7.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width: 67%;
+	height: 100%;
+	position: fixed;
+	overflow-y: auto;
+}
+
+.collection-post-list {
+	list-style: none;
+	position: relative;
+	top: 215px;
+	width: 60%;
+	margin: 0 auto;
+	padding-bottom: 60px;
+}
+
+.collection-post-list li {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 20px;
+	margin-bottom: 10px;
+	cursor: pointer;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-o-transition: .5s;
+	-ms-transition: .5s;
+	-moz-transition: .5s;
+	-webkit-transition: .5s;
+	transition: .5s;
+}
+
+.collection-post-list li:hover {
+	padding-left: 30px;
+}
+
+.collection-post-list li h1 {
+	font-size: 14px;
+	font-weight: 600;
+	color: #26272b;
+	text-transform: uppercase;
+	text-decoration: none;
+	letter-spacing: 1px;
+}
+
+.collection-post-list li h1 span {
+	font-size: 12px;
+}
+
+/*
  * Manage Posts
  * ------------
  */
