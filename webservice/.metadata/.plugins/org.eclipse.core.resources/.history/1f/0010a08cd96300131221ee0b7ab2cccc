@@ -1000,8 +1000,7 @@ public class DB_Connector {
 	        	return false;
 	        }
 	        
-		} 
-    	catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			

@@ -38,7 +38,6 @@ public class PostResource {
 		 Date now = cal.getTime();
 		 post.setCreationDate(now.toString());
 		 Boolean result = dbcon.createPost(post);
-		 dbcon.incCollPosts(post.getCollectionID());
 		 System.out.println("used method createPost");
 		 return result;
 	 }

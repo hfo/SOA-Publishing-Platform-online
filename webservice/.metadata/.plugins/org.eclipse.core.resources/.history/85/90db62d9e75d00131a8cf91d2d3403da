@@ -1,5 +1,0 @@
-package messageBodyWriter;
-
-public class CollectionMessageBodyWriter {
-
-}

@@ -65,7 +65,6 @@ public class CollectionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection getCollectionByID(@PathParam("id") int id){
 		dbcon.initDBConnection();
-		dbcon.incCollViews(id);
 		Collection collection = dbcon.getSingleCollection(id);
 		System.out.println("used method getSingleCollection");
 		return collection;

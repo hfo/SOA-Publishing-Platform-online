@@ -36,4 +36,6 @@
 <fullyQualifiedTypeName name="java.sql.Date"/>
 <fullyQualifiedTypeName name="java.util.Calendar"/>
 <fullyQualifiedTypeName name="com.owlike.genson.annotation.JsonIgnore"/>
+<fullyQualifiedTypeName name="webservice.representations.Comment"/>
+<fullyQualifiedTypeName name="javax.ws.rs.PUT"/>
 </qualifiedTypeNameHistroy>

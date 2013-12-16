@@ -38,7 +38,6 @@ public class PostResource {
 		 Date now = cal.getTime();
 		 post.setCreationDate(now.toString());
 		 Boolean result = dbcon.createPost(post);
-		 dbcon.incCollPosts(post.getCollectionID());
 		 System.out.println("used method createPost");
 		 return result;
 	 }
@@ -48,8 +47,8 @@ public class PostResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Post getPostById(@PathParam("id") int id){
 		dbcon.initDBConnection();
-		dbcon.incPostViews(id);
 		Post post = dbcon.getSinglePost(id);
+		dbcon.incPostViews(post.getCollectionID());
 		System.out.println("used method getSinglePost");
 		return post;	
 	}
