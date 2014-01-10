@@ -4,6 +4,7 @@
 	<item value="true" key="J2EE_EXPORT_SOURCE"/>
 	<list key="J2EE_EXPORT_JST_WEB">
 		<item value="C:\Users\Heiko\Desktop\federwebservice.war"/>
+		<item value="C:\web\tomcat 6.0\webapps\federwebservice.war"/>
 		<item value="C:\Users\Heiko\Dropbox\federwebservice.war"/>
 		<item value="C:\Users\Heiko\Dropbox\SOA\aktuelle .war service\federwebservice.war"/>
 	</list>

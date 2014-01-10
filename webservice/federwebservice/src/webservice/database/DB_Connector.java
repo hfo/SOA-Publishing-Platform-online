@@ -7,10 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException; 
 import java.sql.Statement; 
 import java.util.ArrayList;
+
 import webservice.representations.Collection;
 import webservice.representations.Comment;
 import webservice.representations.Post;
 import webservice.representations.User;
+import webservice.security.Encryptor;
 
 public class DB_Connector { 
      
@@ -256,6 +258,7 @@ public class DB_Connector {
     public boolean createUser(User user){
     	try {
     		initDBConnection();
+    		if(checkUsernameTaken(user.getUsername())==false){
 			PreparedStatement stmt = connection.prepareStatement("INSERT INTO USER (username,password,email)"
 					+ "VALUES (?,?,?)");
 			stmt.setString(1, user.getUsername());
@@ -265,7 +268,8 @@ public class DB_Connector {
 			stmt.close();
 			
 			return true;
-			
+    		}
+    		else{return false;}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -303,7 +307,65 @@ public class DB_Connector {
     	//TODO
     }
     
+    public boolean checkLogin(String name, String password){
+    	PreparedStatement stmt;
+    	String encrypted = Encryptor.get_SHA_1_SecurePassword(password);
+    	try {
+    		initDBConnection();
+			stmt= connection.prepareStatement( "SELECT * FROM USER ;");
+			ResultSet rs = stmt.executeQuery();
+			     
+			while ( rs.next() ) {
+				if( name.equals(rs.getString("username")) ){
+					if( encrypted.equals(rs.getString("password")) ){
+						System.out.println("LoginData correct");
+						return true;
+					}
+					else{System.out.println("LoginData not correct");
+						return false;}
+				}
+				
+			}
+			System.out.println("No such Username");
+			return false;
+			        
+		}
+    	catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
+    }
+    
+    public boolean checkUsernameTaken(String username){
+    	PreparedStatement stmt;
     	
+    	try {
+    		initDBConnection();
+			stmt= connection.prepareStatement( "SELECT * FROM USER ;");
+			ResultSet rs = stmt.executeQuery();
+			System.out.println("JSON:"+ username);
+			String curUsername;
+			while ( rs.next() ) {
+				curUsername=rs.getString("username");
+				System.out.println("DB:"+ curUsername);
+				if( curUsername.equals(username)){
+					System.out.println("UserName is taken");
+					return true;
+				}
+			}
+			System.out.println("UserName is not taken");
+			return false;
+			        
+		}
+    	catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
+    }
     public ArrayList<Post> getPosts(){
     	ArrayList<Post> PostsInDB = new ArrayList<Post>();
     	try {

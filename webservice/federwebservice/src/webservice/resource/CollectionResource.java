@@ -1,6 +1,7 @@
 package webservice.resource;
 
 import java.util.ArrayList;
+
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -10,9 +11,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+
 import webservice.database.DB_Connector;
 import webservice.representations.Collection;
 import webservice.representations.Post;
+import webservice.security.Encryptor;
 
 
 @Path("collections")
@@ -24,6 +27,7 @@ public class CollectionResource {
 	public ArrayList<Collection> getCollections(){
 		dbcon.initDBConnection();
 		  ArrayList<Collection> list = dbcon.getCollections();
+		  Encryptor.get_SHA_1_SecurePassword("mypassword");
 		  System.out.println("used method getCollections");
 		  return list;
 		  

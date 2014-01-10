@@ -38,4 +38,7 @@
 <fullyQualifiedTypeName name="com.owlike.genson.annotation.JsonIgnore"/>
 <fullyQualifiedTypeName name="webservice.representations.Comment"/>
 <fullyQualifiedTypeName name="javax.ws.rs.PUT"/>
+<fullyQualifiedTypeName name="java.security.NoSuchAlgorithmException"/>
+<fullyQualifiedTypeName name="java.security.MessageDigest"/>
+<fullyQualifiedTypeName name="webservice.security.Encryptor"/>
 </qualifiedTypeNameHistroy>
