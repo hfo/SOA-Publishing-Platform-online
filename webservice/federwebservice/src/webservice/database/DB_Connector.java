@@ -13,6 +13,9 @@ import webservice.representations.Comment;
 import webservice.representations.Post;
 import webservice.representations.User;
 import webservice.security.Encryptor;
+import webservice.security.OAuthAccessToken;
+import webservice.security.OAuthTemporaryCredential;
+import webservice.security.OAuthVerifier;
 
 public class DB_Connector { 
      
@@ -49,6 +52,9 @@ public class DB_Connector {
         	createTablePost();
         	createTableComment();
         	createTableCollection();
+        	createTableTempCredential();
+        	createTableAccessToken();
+        	createTableVerifier();
         } catch (SQLException e) {
         	System.out.println("Fehler bei initDB");
             throw new RuntimeException(e); 
@@ -66,6 +72,10 @@ public class DB_Connector {
          } 
      }
     
+    public Connection getConnection() {
+    	return connection;
+    }
+     
     public void createTableUser(){
     	try {
 
@@ -144,6 +154,59 @@ public class DB_Connector {
 
 		}
     	
+    }
+    public void createTableTempCredential(){
+    	try {
+
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS TEMPCREDENTIALS("
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "oauth_token VARCHAR(255),"
+					+ "oauth_token_secret VARCHAR(255),"
+					+ "oauth_callback VARCHAR(255),"
+					+ "timestamp VARCHAR(255));");
+			System.out.println("entered temporary credentials table");
+
+		} catch (SQLException e) {
+            System.err.println("Couldn't handle DB-Query"); 
+            e.printStackTrace(); 
+
+		}
+    }
+    public void createTableAccessToken(){
+    	try {
+
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ACCESSTOKENS("
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "oauth_token VARCHAR(255),"
+					+ "oauth_token_secret VARCHAR(255),"
+					+ "username VARCHAR(255),"
+					+ "timestamp VARCHAR(255));");
+			System.out.println("entered access token table");
+
+		} catch (SQLException e) {
+            System.err.println("Couldn't handle DB-Query"); 
+            e.printStackTrace(); 
+
+		}
+    }
+    public void createTableVerifier(){
+    	try {
+
+			Statement stmt = connection.createStatement();
+			stmt.executeUpdate("CREATE TABLE IF NOT EXISTS VERIFIERS("
+					+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "oauth_verifier VARCHAR(255),"
+					+ "username VARCHAR(255),"
+					+ "timestamp VARCHAR(255));");
+			System.out.println("entered verifier table");
+
+		} catch (SQLException e) {
+            System.err.println("Couldn't handle DB-Query"); 
+            e.printStackTrace(); 
+
+		}
     }
     public ArrayList<User> getUsers(){
     	ArrayList<User> UsersInDB = new ArrayList<User>();
@@ -1139,5 +1202,67 @@ public class DB_Connector {
 			return false;
 		}
     	
+    }
+    public boolean createTemporaryCredential(OAuthTemporaryCredential tempCredential){
+    	try {
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO TEMPCREDENTIALS (oauth_token, oauth_token_secret, oauth_callback, timestamp)"
+					+ "VALUES (?,?,?,?)");
+			stmt.setString(1, tempCredential.getOauth_token());
+			stmt.setString(2, tempCredential.getOauth_token_secret());
+			stmt.setString(3, tempCredential.getOauth_callback());
+			stmt.setString(4, tempCredential.getTimestamp());
+			stmt.execute();
+			stmt.close();
+			
+			return true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
+    }
+    public boolean createAccessToken(OAuthAccessToken token){
+    	try {
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO ACCESSTOKENS (oauth_token, oauth_token_secret, username, timestamp)"
+					+ "VALUES (?,?,?,?)");
+			stmt.setString(1, token.getOauth_token());
+			stmt.setString(2, token.getOauth_token_secret());
+			stmt.setString(3, token.getUsername());
+			stmt.setString(4, token.getTimestamp());
+			stmt.execute();
+			stmt.close();
+			
+			return true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
+    }
+    public boolean createVerifier(OAuthVerifier verifier){
+    	try {
+    		initDBConnection();
+			PreparedStatement stmt = connection.prepareStatement("INSERT INTO VERIFIERS (oauth_verifier, username, timestamp)"
+					+ "VALUES (?,?,?)");
+			stmt.setString(1, verifier.getOauth_verifier());
+			stmt.setString(2, verifier.getUsername());
+			stmt.setString(3, verifier.getTimestamp());
+			stmt.execute();
+			stmt.close();
+			
+			return true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
     }
 }
