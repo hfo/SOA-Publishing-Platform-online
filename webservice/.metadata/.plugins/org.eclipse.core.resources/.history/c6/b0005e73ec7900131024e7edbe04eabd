@@ -1,5 +1,0 @@
-package webservice.security;
-
-public class Encryptor {
-
-}

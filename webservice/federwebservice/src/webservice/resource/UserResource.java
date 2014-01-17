@@ -9,8 +9,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.Path;
+
+import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.oauth.signature.OAuthSignatureException;
 
 import webservice.database.DB_Connector;
 import webservice.representations.Post;
@@ -20,6 +24,9 @@ import webservice.security.Encryptor;
 @Path("users")
 public class UserResource {
 	DB_Connector dbcon = DB_Connector.getInstance();
+	
+	@Context
+	HttpContext context;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

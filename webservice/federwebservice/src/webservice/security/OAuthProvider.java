@@ -5,6 +5,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,17 +26,39 @@ public class OAuthProvider {
 			) throws SQLException {
 		boolean authorized = false;
 		
-		// TODO: check oauth_signature
+		// TODO: check oauth_signature QUESTION when done like in checkTokenRequest there are missing some handovers
 		
 		dbcon.initDBConnection();
 		Connection connection = dbcon.getConnection();
 		PreparedStatement stmt = connection.prepareStatement("SELECT * FROM ACCESSTOKENS WHERE oauth_token = ?");
 		stmt.setString(1, oauth_token);
 		ResultSet rs = stmt.executeQuery();
-		     
+		
+		// DONE: check expiration of temporary token via its timestamp===> QUESTION: check accesstokens for expiration or was something else ment to be done?     if yes remove comment in IF
 		while ( rs.next() ) {
-			// TODO: check expiration of temporary token via its timestamp
-			if (rs.getString("username").equals(resource_owner)) {
+			int expTime = 15;
+			String stamp = rs.getString("timestamp");
+			DateFormat format = new SimpleDateFormat("EEE MMM d H:m:s z yyyy",Locale.UK);
+			Date date = new Date();
+			
+			try {
+				date = format.parse(stamp);	
+				System.out.println("Timestamp: "+date.toString());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			Calendar cal = Calendar.getInstance();
+			Date now = cal.getTime();
+			System.out.println("NOW: "+now.toString());
+			cal.setTime(date);
+			cal.add(cal.MINUTE, expTime);
+			Date expDate = cal.getTime();	
+			System.out.println("expDate: "+expDate.toString());	
+			
+
+			
+			if (rs.getString("username").equals(resource_owner)/*&& now.before(expDate)*/) {
 				authorized = true;
 			}
 		}	
@@ -104,10 +132,34 @@ public class OAuthProvider {
 		PreparedStatement stmt = connection.prepareStatement( "SELECT * FROM TEMPCREDENTIALS WHERE oauth_token = ?;");
 		stmt.setString(1, oauth_token);
 		ResultSet rs = stmt.executeQuery();
-		     
+		// DONE: check expiration of temporary token via its timestamp
+		//check if expiring date expDate=timestamp+expTime is before the current time 
+
 		while ( rs.next() ) {
-			// TODO: check expiration of temporary token via its timestamp
-			valid = true;
+				int expTime = 15;
+				String stamp = rs.getString("timestamp");
+				DateFormat format = new SimpleDateFormat("EEE MMM d H:m:s z yyyy",Locale.UK);
+				Date date = new Date();
+				
+				try {
+					date = format.parse(stamp);	
+					System.out.println("Timestamp: "+date.toString());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				Calendar cal = Calendar.getInstance();
+				Date now = cal.getTime();
+				System.out.println("NOW: "+now.toString());
+				cal.setTime(date);
+				cal.add(cal.MINUTE, expTime);
+				Date expDate = cal.getTime();	
+				System.out.println("expDate: "+expDate.toString());	
+				
+				if(now.before(expDate)){
+					valid = true;	
+				}
+	
 		}	
 		        
 		stmt.close();
@@ -124,10 +176,52 @@ public class OAuthProvider {
 			String oauth_token,
 			HttpServletRequest request
 			) throws SQLException, UnsupportedEncodingException {
+		
 		// request validation status
 		boolean validRequest = true;
 		
-		// TODO: check temporal credentials for expiration (oauth_token)
+		dbcon.initDBConnection();
+		Connection connection = dbcon.getConnection();
+		
+		// DONE: check temporal credentials for expiration (oauth_token)
+		PreparedStatement stmt1 = connection.prepareStatement( "SELECT * FROM TEMPCREDENTIALS WHERE oauth_token = ?;");
+		stmt1.setString(1, oauth_token);
+		ResultSet rs1 = stmt1.executeQuery();
+		boolean enterRS1=false;
+		
+		while ( rs1.next() ) {
+			enterRS1=true;
+			int expTime = 15;
+			String stamp = rs1.getString("timestamp");
+			DateFormat format = new SimpleDateFormat("EEE MMM d H:m:s z yyyy",Locale.UK);
+			Date date = new Date();
+			
+			try {
+				date = format.parse(stamp);	
+				System.out.println("Timestamp: "+date.toString());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			Calendar cal = Calendar.getInstance();
+			Date now = cal.getTime();
+			System.out.println("NOW: "+now.toString());
+			cal.setTime(date);
+			cal.add(cal.MINUTE, expTime);
+			Date expDate = cal.getTime();	
+			System.out.println("expDate: "+expDate.toString());	
+			
+			if(!now.before(expDate)){
+				validRequest = false;	
+			}
+		}
+		stmt1.close();
+		rs1.close();
+		
+		//false validRequest when no oauth_token was found in DB
+		if(!enterRS1){
+			validRequest=false;
+		}
 	
 		// verifiy consumer credentials
 		if (oauth_signature_method.equals("PLAINTEXT")) {
@@ -159,8 +253,6 @@ public class OAuthProvider {
 		}
 		
 		// verify oauth_verifier (check existance in database)
-		dbcon.initDBConnection();
-		Connection connection = dbcon.getConnection();
 		PreparedStatement stmt = connection.prepareStatement( "SELECT * FROM VERIFIERS WHERE oauth_verifier = ?;");
 		stmt.setString(1, oauth_verifier);
 		ResultSet rs = stmt.executeQuery();
@@ -186,10 +278,19 @@ public class OAuthProvider {
 			
 			// build response
 			String response = "oauth_token="+oauth_access_token+"&oauth_token_secret="+oauth_access_token_secret+"&username="+username;
+			
+			// DONE: delete temporary credentials and verifier from database
+			PreparedStatement stmt2 = connection.prepareStatement( "DELETE FROM TEMPCREDENTIALS WHERE oauth_token = ?;");
+			stmt2.setString(1, oauth_token);
+			stmt2.execute();
+			PreparedStatement stmt3 = connection.prepareStatement( "DELETE FROM VERIFIERS WHERE oauth_verifier = ?;");
+			stmt3.setString(1, oauth_verifier);
+			stmt3.execute();
+			
 			return response;
 		}
 		
-		// TODO: delete temporary credentials and verifier from database
+		
 		
 		return "";
 	}

@@ -4,23 +4,21 @@
 		<item value="1440" key="dialogWidth"/>
 		<item value="767" key="dialogHeight"/>
 		<list key="orderedProviders">
+			<item value="org.eclipse.ui.commands"/>
 		</list>
 		<list key="textArray">
+			<item value="outline"/>
 		</list>
 		<list key="orderedElements">
+			<item value="org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.ContentOutline)"/>
 		</list>
 		<list key="textEntries">
+			<item value="1"/>
 		</list>
 	</section>
 	<section name="WorkbenchPreferenceDialogSettings">
 		<item value="-60" key="DIALOG_Y_ORIGIN"/>
 		<item value="-36" key="DIALOG_X_ORIGIN"/>
-	</section>
-	<section name="ZipFileImportWizard">
-		<item value="false" key="WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
-		<list key="WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID">
-			<item value="C:\Users\Heiko\Desktop\RESTfulGuestBookService.zip"/>
-		</list>
 	</section>
 	<section name="NewWizardAction">
 		<item value="org.eclipse.jst.servlet.ui.internal.wizard.AddServletWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
@@ -28,6 +26,12 @@
 			<item value="org.eclipse.wst.server.ui"/>
 			<item value="org.eclipse.wst.web.ui"/>
 			<item value="org.eclipse.wst.XMLCategory"/>
+		</list>
+	</section>
+	<section name="ZipFileImportWizard">
+		<item value="false" key="WizardZipFileResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
+		<list key="WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID">
+			<item value="C:\Users\Heiko\Desktop\RESTfulGuestBookService.zip"/>
 		</list>
 	</section>
 	<section name="EditorSelectionDialog">

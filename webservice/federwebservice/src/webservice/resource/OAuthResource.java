@@ -95,9 +95,11 @@ public class OAuthResource {
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response
 			) throws IOException, SQLException {
+		System.out.println(oauth_token);
+		System.out.println(response);
 		
 		boolean valid = oauth.checkAuthorizeRequest(oauth_token, response);
-		
+		System.out.println(valid);
 		// redirect to signin, if oauth_token was valid (in database)
 		if (valid) {
 			response.sendRedirect("signin?oauth_token="+oauth_token);
@@ -184,9 +186,8 @@ public class OAuthResource {
 			String username = form.get("username").get(0);
 			String password = form.get("password").get(0);
 			String callback = "";
-			
-			// TODO: !!! fetch and check real credentials from database !!!
-			if (username.equals("Philipp") && password.equals("1234")) {
+		     // DONE: !!! fetch and check real credentials from database !!!
+			if (dbcon.checkLogin(username, password)) {
 				// get callback url
 				dbcon.initDBConnection();
 				Connection connection = dbcon.getConnection();
