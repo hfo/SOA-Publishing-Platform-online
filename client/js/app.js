@@ -142,6 +142,14 @@ $(function() {
 		});
 
 		/*
+		 * Comments Collection
+		 * backbone collection of comments
+		 */
+	    var Comments = Backbone.Collection.extend({
+			model: Comment
+		});
+
+		/*
 		 * SidebarView
 		 * the view for our sidebar
 		 */
@@ -155,6 +163,8 @@ $(function() {
 					case 'homepage':
 						var markup = $('#homepage-sidebar').clone();
 						$('.sidebar').empty().append(markup);
+						$('.user-data').hide();
+						$('.user-login').show();
 						break;
 					case 'post':
 						var markup = $('#post-details-sidebar').clone();
@@ -222,7 +232,8 @@ $(function() {
 				'click .new-post-button':			'showEditorView',
 				'click .manage-posts-button':		'showManageView',
 				'click .browse-collections-button':	'showCollectionView',
-				'click .save-post':					'saveCurrentPost'
+				'click .save-post':					'saveCurrentPost',
+				'click .signin': 					'signin'
 			},
 			initialize: function() {
 				logger('Feder App started.', 'info');
@@ -235,7 +246,8 @@ $(function() {
 					'click .new-post-button':			'showEditorView',
 					'click .manage-posts-button':		'showManageView',
 					'click .browse-collections-button':	'showCollectionView',
-					'click .save-post':					'saveCurrentPost'
+					'click .save-post':					'saveCurrentPost',
+					'click .signin': 					'signin'
 				});
 
 				// load start views
@@ -245,12 +257,6 @@ $(function() {
 				this.contentView = new ContentView();
 				this.contentView.loadViewState('homepage');
 
-				// sample user instantiation (signed in user)
-				this.currentUser = new User({ id: 1, username: 'Philipp' });
-
-				// user's own post collection
-				this.userPosts = new UserPosts();
-
 				// instantiate and fetch list of post collections from server
 				this.collections = new Collections();
 				this.collections.fetch();
@@ -258,6 +264,38 @@ $(function() {
 				// sort collections list by views (descending)
 				this.collections.models = _.sortBy(this.collections.models, function(o) { return o.get('views'); });
 				this.collections.models.reverse();
+
+				// was it an oauth callback?
+				if (location.search) {
+					var oauth_exchange = $.deparam(location.search.substring(1));
+
+					// exchange verifier for access token
+					$.get(
+						_urlRoot+'/oauth/token', 
+						{ 
+							oauth_consumer_key: 'feder',
+							oauth_signature_method: 'PLAINTEXT',
+							oauth_token: oauth_exchange.oauth_token,
+							oauth_verifier: oauth_exchange.oauth_verifier,
+							oauth_signature: 'GET&http://localhost:8080/oauth/token&oauth_consumer_key=feder&oauth_signature_method=PLAINTEXT&oauth_token='+oauth_exchange.oauth_token+'&oauth_verifier='+oauth_exchange.oauth_verifier
+						} 
+					).done(function(data) {
+						var token = $.deparam(data);
+
+						// create user
+						this.currentUser = new User({ id: 1, username: token.username, oauth_token: token.oauth_token });
+
+						// user's own post collection
+						this.userPosts = new UserPosts();
+
+						// render user information
+						$('.user-login').hide();
+						$('.user-data').show();
+						$('.profile span').empty().append(this.currentUser.get('username'));
+					}).fail(function() {
+						logger('[OAuth] Oh oh! Client could not exchange ferifier for an access token.', 'error');
+					});
+				}
 
 				// set up medium.js plugin
 				this.setupMedium();
@@ -329,6 +367,14 @@ $(function() {
 															<h1>'+value.get('title')+' <span>&mdash; '+author.get('username')+'</span></h1>\
 														</li>';
 									$('.collection-post-list').append(postMarkup);
+
+									$('.collection-post-item').off('click').bind('click', function() {
+										_.each(collectionPosts.models, function(value, key, list) {
+											if (value.get('id') == $(this).data('id')) {
+												_this.showPostView(null, value, author);
+											}
+										}, this);
+									});
 								},
 								error: function(model, response, options) {
 									logger('[Collection Posts Fetch] Oh oh! Could not fetch author information of post with id '+value.get('id')+': '+response, 'error');
@@ -405,8 +451,34 @@ $(function() {
 				this.sidebarView.loadViewState('homepage');
 				this.contentView.loadViewState('manage');
 			},
-			showPostView: function() {
+			showPostView: function(event, post, author) {
 				logger('[View Changed] Post View', 'info');
+
+				// fill post data
+				$('.post-body').empty().append(post.get('body'));
+				$('.post-title').empty().append('<p>'+post.get('title')+'</p>');
+				$('.post-subtitle').empty().append(post.get('subtitle'));
+
+				// append comments
+				var comments = new Comments();
+				comments.url = _urlRoot+'/posts/'+post.get('id')+'/comments';
+				comments.fetch({
+					success: function(model, response, options) {
+						$('.post-body').append('<hr />');
+						$('.post-body').append('<h1>Comments</h1>');
+
+						_.each(comments.models, function(value, key, list) {
+							$('.post-body').append('<p>'+value.get('body')+'</p>');
+						});
+					},
+					error: function(model, response, options) {
+						logger('[Collection Posts Fetch] Oh oh! Could not fetch author information of post with id '+value.get('id')+': '+response, 'error');
+					}
+				});
+
+				// set current post
+				this.currentPost = post;
+
 				this.sidebarView.loadViewState('post');
 				this.contentView.loadViewState('post');
 			},
@@ -466,6 +538,34 @@ $(function() {
 
 				// push updated post to server
 				this.currentPost.save();
+			},
+			signin: function() {
+				// get oauth temporary credentials
+				$.get(
+					_urlRoot+'/oauth/initiate', 
+					{ 
+						oauth_signature_method: 'PLAINTEXT',
+						oauth_callback: 'http://localhost:8080/client/test.html',
+						oauth_consumer_key: 'feder',
+						oauth_signature: 'GET&http://localhost:8080/oauth/initiate&oauth_callback=http://localhost:8080/client/test.html&oauth_consumer_key=feder&oauth_signature_method=PLAINTEXT'
+					} 
+				).done(function(data) {
+					var tempCredentials = $.deparam(data);
+
+					// authorize client
+					$.get(
+						_urlRoot+'/oauth/authorize', 
+						{ 
+							oauth_token: tempCredentials.oauth_token
+						} 
+					).done(function(data) {
+						window.location.href = _urlRoot+'/oauth/signin?oauth_token='+tempCredentials.oauth_token;
+					}).fail(function() {
+						logger('[OAuth] Oh oh! Client could not authorize with given temporary token.', 'error');
+					});
+				}).fail(function() {
+					logger('[OAuth] Oh oh! Client was unable to retrieve temporary token.', 'error');
+				});
 			}
 		});
 

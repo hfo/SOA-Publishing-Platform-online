@@ -41,6 +41,14 @@ blockquote {
 	border-left: 3px #26272b solid;
 }
 
+hr {
+	background: #26272b;
+	width: 120px;
+	height: 1px;
+	border: none;
+	margin: 36px 0;
+}
+
 a {
 	color: #26272b;
 	text-decoration: underline;
@@ -485,6 +493,10 @@ input {
 	margin: 120px 0 0;
 }
 
+.post-title p {
+	margin: 0 !important;
+}
+
 #post-title {
 	min-height: 40px;
 	margin: 120px 0 -24px;
@@ -575,7 +587,7 @@ input {
  * ---------
  */
 
-.user-data {
+.user-data, .user-login {
 	position: fixed;
 	bottom: 0;
 	left: 0;

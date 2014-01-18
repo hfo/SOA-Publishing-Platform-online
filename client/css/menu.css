@@ -73,7 +73,7 @@
   transition: opacity 180ms, margin 180ms;
 
   position: absolute;
-  color: #fff;
+  color: #f1f1f1;
   margin-top: -20px;
   margin-left: -115px;
 }
@@ -132,8 +132,8 @@
 }
 
 .options {
-  background-color: #262625;
-  box-shadow: 0 0 2px #262625;
+  background-color: #26272b;
+  box-shadow: 0 0 2px #26272b;
   position: absolute;
   border-radius: 5px;
   margin-left: 23px;
